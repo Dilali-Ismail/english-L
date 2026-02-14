@@ -4,105 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide 9 - Sentence Scramble</title>
+    <title>Slide 9 - Mastering Greetings | English Introductions</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
         }
     </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         :root {
-            --bg-body: #0f172a;
-            --surface: #1e293b;
-            --border-ui: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --accent: #6366f1;
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --text-slate: #0f172a;
+            --bg-body: #f1f5f9;
+            --card-bg: #ffffff;
+            --btn-bg: #f8fafc;
+            --btn-border: #f1f5f9;
+            --btn-text: #64748b;
+        }
 
-            --tile-bg: #334155;
-            --tile-text: #f1f5f9;
-            --tile-locked-bg: #14532d;
-            --tile-locked-text: #86efac;
-            --tile-border: #475569;
+        html.dark {
+            --glass-bg: rgba(15, 23, 42, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-slate: #f1f5f9;
+            --bg-body: #0f172a;
+            --card-bg: #1e293b;
+            --btn-bg: #334155;
+            --btn-border: #475569;
+            --btn-text: #94a3b8;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
-            color: var(--text-primary);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0, transparent 40%);
             min-height: 100vh;
             margin: 0;
-            padding: 2rem;
+            padding: 3rem;
+            transition: background-color 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background-image:
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0, transparent 40%),
-                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0, transparent 40%);
-        }
-
-        .game-container {
-            background-color: var(--surface);
-            border-radius: 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 900px;
-            border: 1px solid var(--border-ui);
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            min-height: 300px;
-        }
-
-        .sentence-area {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            min-height: 120px;
-            align-items: center;
-            padding: 2rem;
-            border-radius: 1rem;
-            background-color: rgba(0, 0, 0, 0.2);
-            border: 2px dashed var(--border-ui);
-            transition: all 0.3s ease;
-        }
-
-        .word-tile {
-            background-color: var(--tile-bg);
-            color: var(--tile-text);
-            border: 1px solid var(--tile-border);
-            border-radius: 0.75rem;
-            padding: 1rem 1.5rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            cursor: grab;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, background-color 0.2s;
-            touch-action: none;
-        }
-
-        .word-tile:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-        }
-
-        .word-tile:active {
-            cursor: grabbing;
-        }
-
-        .word-tile.locked {
-            background-color: var(--tile-locked-bg);
-            color: var(--tile-locked-text);
-            border-color: #22c55e;
-            cursor: default;
-            transform: none !important;
         }
 
         .header-gradient {
@@ -111,212 +60,366 @@
             -webkit-text-fill-color: transparent;
         }
 
-        #victory-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.95);
+        .category-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s;
-            z-index: 50;
-            border-radius: 1.5rem;
+            gap: 1.5rem;
         }
 
-        #victory-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
+        .cat-title {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 1.25rem;
+            text-align: center;
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3);
+            margin-bottom: 0.5rem;
+        }
+
+        .greeting-item {
+            background: var(--card-bg);
+            border: 1px solid var(--btn-border);
+            border-radius: 1.25rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .greeting-item:hover {
+            transform: scale(1.02) translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 24px -10px var(--primary-glow);
+        }
+
+        .greeting-item:active {
+            transform: scale(0.98);
+        }
+
+        .greeting-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-slate);
+        }
+
+        .audio-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--btn-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--btn-text);
+            transition: all 0.2s;
+            border: 1px solid var(--btn-border);
+        }
+
+        .greeting-item:hover .audio-btn {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .playing-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 3rem;
+        }
+
+        /* 🌊 Dynamic Wave effect */
+        .wave-bar {
+            display: none;
+            width: 3px;
+            height: 12px;
+            background: currentColor;
+            border-radius: 2px;
+            margin: 0 1px;
+        }
+
+        .speaking .wave-bar {
+            display: block;
+            animation: waveGrowth 0.6s infinite ease-in-out;
+        }
+
+        .speaking .static-icon {
+            display: none;
+        }
+
+        @keyframes waveGrowth {
+
+            0%,
+            100% {
+                height: 6px;
+            }
+
+            50% {
+                height: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+                overflow-y: auto;
+                height: auto;
+                display: block;
+            }
+
+            .grid-layout {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .category-card {
+                padding: 1.25rem;
+                border-radius: 1.5rem;
+                max-width: none;
+                gap: 1rem;
+            }
+
+            .text-5xl {
+                font-size: 2.25rem;
+            }
+
+            .cat-title {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .greeting-item {
+                padding: 0.75rem 1rem;
+                border-radius: 1rem;
+            }
+
+            .greeting-label {
+                font-size: 0.95rem;
+            }
+
+            .audio-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="text-center space-y-4 mb-8">
+    <div class="text-center space-y-6 ">
         <span
-            class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-900/30 px-4 py-1.5 rounded-full border border-indigo-800/50">
-            Slide 09 - Practice
-        </span>
-        <h1 class="text-4xl md:text-5xl font-black text-slate-100 tracking-tight">
-            Sentence <span class="header-gradient">Scramble</span>
-        </h1>
-        <p class="text-slate-400 font-medium">Drag the words to form correct sentences.</p>
+            class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-400 px-4 py-1.5 rounded-full border border-indigo-100 dark:border-indigo-800/50">Slide
+            09 - Formal / Informal Greetings:</span>
+        <h1 class="text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tight transition-colors">Greeting
+            <span class="header-gradient">Nuances</span></h1>
     </div>
 
-    <div class="game-container relative">
-        <div class="flex justify-between text-slate-400 font-bold mb-4">
-            <span>Score: <span id="score" class="text-white">0</span></span>
-            <span>Level: <span id="level" class="text-white">1</span>/4</span>
+    <div class="grid-layout">
+        <!-- Formal Section -->
+        <div class="category-card">
+            <div class="cat-title">Formal Greetings</div>
+            <div id="formalContainer" class="space-y-4"></div>
         </div>
 
-        <div id="sentence-area" class="sentence-area"></div>
-
-        <div id="victory-overlay">
-            <div class="text-6xl mb-4">🏆</div>
-            <h2 class="text-4xl font-black text-white mb-4">Great Job!</h2>
-            <button onclick="initGame()"
-                class="px-8 py-3 bg-indigo-600 rounded-xl text-white font-bold hover:bg-indigo-500 transition">Play
-                Again</button>
+        <!-- Informal Section -->
+        <div class="category-card">
+            <div class="cat-title" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">Informal
+                Greetings</div>
+            <div id="informalContainer" class="space-y-4"></div>
         </div>
     </div>
 
     <script>
-        const levels = [
-            "My name is John",
-            "I am from London",
-            "Nice to meet you",
-            "I am a Doctor"
+        const formalGreetings = [
+            { label: "Good Morning", sound: "audios/greeting/gm.mpeg" },
+            { label: "Good afternoon", sound: "audios/greeting/gf.mpeg" },
+            { label: "Good evening", sound: "audios/greeting/gev.mpeg" },
+            { label: "How do you do?", sound: "audios/greeting/hdyd.mpeg" },
+            { label: "Nice to meet you", sound: "audios/greeting/nicetomeet.mpeg" }
         ];
 
-        let currentLevel = 0;
-        let score = 0;
-        let lockedWords = {};
-        let unlockedWords = [];
-        const area = document.getElementById('sentence-area');
+        const informalGreetings = [
+            { label: "Hi !", sound: "audios/greeting/hi.mpeg" },
+            { label: "Hey !", sound: "audios/greeting/hey.mpeg" },
+            { label: "Hello !", sound: "audios/greeting/hello.mpeg" },
+            { label: "What's up?", sound: "audios/greeting/WhatsApp.mpeg" },
+            { label: "How's it going?", sound: "audios/greeting/howItGoing.mpeg" }
+        ];
 
-        function initGame() {
-            currentLevel = 0; score = 0;
-            document.getElementById('victory-overlay').classList.remove('active');
-            loadLevel();
+        function renderGreetings(items, containerId) {
+            const container = document.getElementById(containerId);
+            items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = "greeting-item";
+                div.onclick = () => handleInteraction(item, div);
+                div.innerHTML = `
+                    <span class="greeting-label">${item.label}</span>
+                    <div class="audio-btn">
+                        <svg class="static-icon w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                        <div class="wave-bar" style="animation-delay: 0.1s"></div>
+                        <div class="wave-bar" style="animation-delay: 0.2s"></div>
+                        <div class="wave-bar" style="animation-delay: 0.3s"></div>
+                    </div>
+                    <div class="playing-indicator"></div>
+                `;
+                container.appendChild(div);
+            });
         }
 
-        function loadLevel() {
-            if (currentLevel >= levels.length) {
-                document.getElementById('victory-overlay').classList.add('active');
+        renderGreetings(formalGreetings, 'formalContainer');
+        renderGreetings(informalGreetings, 'informalContainer');
+
+        let currentAudio = null;
+        let currentSpeakingElement = null;
+
+        // Expose globally for parent navigation
+        window.setTheme = function (mode) {
+            if (mode === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        };
+
+        window.stopSlideAudio = function () {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            if (currentSpeakingElement) {
+                currentSpeakingElement.classList.remove('speaking');
+                if (currentSpeakingElement._progressInterval) clearInterval(currentSpeakingElement._progressInterval);
+                const indicator = currentSpeakingElement.querySelector('.playing-indicator');
+                if (indicator) indicator.style.width = '0%';
+                currentSpeakingElement = null;
+            }
+        };
+
+        function handleInteraction(item, el) {
+            if (el.classList.contains('speaking')) {
+                window.stopSlideAudio();
                 return;
             }
 
-            document.getElementById('score').innerText = score;
-            document.getElementById('level').innerText = currentLevel + 1;
+            window.stopSlideAudio();
+            currentSpeakingElement = el;
 
-            const sentence = levels[currentLevel];
-            const words = sentence.split(' ');
+            const cleanup = () => {
+                el.classList.remove('speaking');
+                if (el._progressInterval) clearInterval(el._progressInterval);
+                const indicator = el.querySelector('.playing-indicator');
+                if (indicator) indicator.style.width = '0%';
+                if (currentSpeakingElement === el) currentSpeakingElement = null;
+            };
 
-            lockedWords = {};
-            unlockedWords = words.map((w, i) => ({ text: w, originalIndex: i, id: Math.random().toString(36) }));
+            const startProgress = (duration) => {
+                el.classList.add('speaking');
+                const indicator = el.querySelector('.playing-indicator');
+                let startTime = Date.now();
+                const totalDuration = (duration || 1) * 1000;
 
-            // Shuffle
-            for (let i = unlockedWords.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [unlockedWords[i], unlockedWords[j]] = [unlockedWords[j], unlockedWords[i]];
-            }
+                el._progressInterval = setInterval(() => {
+                    let elapsed = Date.now() - startTime;
+                    if (indicator) indicator.style.width = Math.min(elapsed / totalDuration * 100, 100) + '%';
+                    if (elapsed >= totalDuration) clearInterval(el._progressInterval);
+                }, 16);
+            };
 
-            render();
-        }
-
-        function render() {
-            area.innerHTML = '';
-            const total = levels[currentLevel].split(' ').length;
-            let unlockedIdx = 0;
-
-            for (let i = 0; i < total; i++) {
-                if (lockedWords[i]) {
-                    area.appendChild(createTile(lockedWords[i], true));
-                } else {
-                    if (unlockedIdx < unlockedWords.length) {
-                        area.appendChild(createTile(unlockedWords[unlockedIdx], false));
-                        unlockedIdx++;
-                    }
-                }
-            }
-        }
-
-        function createTile(wordObj, isLocked) {
-            const el = document.createElement('div');
-            el.className = 'word-tile' + (isLocked ? ' locked' : '');
-            el.innerText = wordObj.text;
-            el.draggable = !isLocked;
-
-            if (!isLocked) {
-                el.ondragstart = (e) => {
-                    e.dataTransfer.setData('text/plain', JSON.stringify(wordObj));
-                    setTimeout(() => el.classList.add('opacity-50'), 0);
+            if (item.sound && item.sound.trim() !== "") {
+                const audio = new Audio(item.sound);
+                currentAudio = audio;
+                audio.onloadedmetadata = () => startProgress(audio.duration);
+                audio.onended = () => {
+                    cleanup();
+                    currentAudio = null;
                 };
-                el.ondragend = () => el.classList.remove('opacity-50');
-            }
-            return el;
-        }
-
-        area.ondragover = (e) => e.preventDefault();
-        area.ondrop = (e) => {
-            e.preventDefault();
-            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-
-            // Find where we dropped
-            // Simple logic: check if the word matches the slot
-            // Since we don't have precise slots, we check based on global correct order?
-            // Wait, the order-game-v2 logic checked if the text matches the target index.
-            // But we don't know the exact index from a generic drop unless we calculate position.
-
-            // Simplified Logic for Demo:
-            // Just check if the dropped word is the next one needed?
-            // OR reuse the logic: "If currentUnlockedWord.text === targetWord"
-            // Let's implement auto-lock if dropped roughly in place or simple check.
-
-            // Actually, let's keep it simple: Drag anywhere to reorder?
-            // Or Drag to "Slot"?
-            // The referenced code used "checkOrder()" which locked words if they happened to fall into the correct index visually.
-            // Let's simplified version: On drop, we reshuffle unlocked array based on drop position, then check correctness.
-
-            // 1. Remove from old pos
-            const oldIdx = unlockedWords.findIndex(w => w.id === data.id);
-            if (oldIdx === -1) return;
-            unlockedWords.splice(oldIdx, 1);
-
-            // 2. Insert at new pos (Approximation: End of list for now, or find index)
-            // To do it properly involves bounding rects.
-            // Let's just push to end for simplicity in this artifact, or try to be smart.
-            // Smart:
-            let insertIdx = unlockedWords.length;
-            const children = Array.from(area.children).filter(c => !c.classList.contains('locked'));
-            for (let i = 0; i < children.length; i++) {
-                const rect = children[i].getBoundingClientRect();
-                if (e.clientX < rect.left + rect.width / 2) {
-                    insertIdx = i;
-                    break;
-                }
-            }
-            unlockedWords.splice(insertIdx, 0, data);
-
-            // 3. Check Order
-            checkWinCondition();
-            render();
-        };
-
-        function checkWinCondition() {
-            const targetWords = levels[currentLevel].split(' ');
-            // We iterate through visual slots.
-            // If unlockedWords[0] matches targetWords[next_needed_index], lock it?
-            // This requires gaps. The V2 code was sophisticated.
-
-            // Simpler "Lock in order" logic:
-            // If the first unlocked word matches the next needed word, lock it.
-            let nextNeededIndex = 0;
-            while (lockedWords[nextNeededIndex]) nextNeededIndex++;
-
-            if (unlockedWords.length > 0 && unlockedWords[0].text === targetWords[nextNeededIndex]) {
-                lockedWords[nextNeededIndex] = unlockedWords.shift();
-                // Check if done
-                if (Object.keys(lockedWords).length === targetWords.length) {
-                    score += 100;
-                    setTimeout(() => {
-                        currentLevel++;
-                        loadLevel();
-                    }, 1000);
-                }
+                audio.onerror = () => {
+                    currentAudio = null;
+                    runTTS(item.label, cleanup);
+                };
+                audio.play().catch(() => {
+                    currentAudio = null;
+                    runTTS(item.label, cleanup);
+                });
+            } else {
+                el.classList.add('speaking');
+                runTTS(item.label, cleanup);
             }
         }
 
-        // Theme Support
-        window.setTheme = (mode) => {
-            if (mode === 'dark') document.documentElement.classList.add('dark');
-        };
-        document.documentElement.classList.add('dark');
+        function runTTS(text, onComplete) {
+            const synth = window.speechSynthesis;
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = synth.getVoices();
+            const estimatedDuration = (text.length * 0.15) + 0.3;
 
-        loadLevel();
+            const preferredVoice = voices.find(v =>
+                v.name.includes('Samantha') ||
+                v.name.includes('David') ||
+                v.name.includes('Google US English')
+            ) || voices[0];
+
+            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.rate = 0.95;
+
+            if (currentSpeakingElement) {
+                let startTime = Date.now();
+                const totalDuration = estimatedDuration * 1000;
+                const indicator = currentSpeakingElement.querySelector('.playing-indicator');
+                if (currentSpeakingElement._progressInterval) clearInterval(currentSpeakingElement._progressInterval);
+                currentSpeakingElement._progressInterval = setInterval(() => {
+                    let elapsed = Date.now() - startTime;
+                    if (indicator) indicator.style.width = Math.min(elapsed / totalDuration * 100, 100) + '%';
+                    if (elapsed >= totalDuration) clearInterval(currentSpeakingElement._progressInterval);
+                }, 16);
+            }
+
+            utterance.onend = onComplete;
+            utterance.onerror = onComplete;
+            synth.speak(utterance);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.speechSynthesis.getVoices();
+            gsap.set(".greeting-item, .category-card", { visibility: "visible", opacity: 1 });
+            const tl = gsap.timeline();
+            tl.from("h1, span.text-indigo-500", { opacity: 0, y: -20, duration: 0.8, ease: "power2.out" });
+            tl.from(".category-card", { opacity: 0, y: 30, duration: 0.6, stagger: 0.15, ease: "power2.out" }, "-=0.4");
+            tl.from(".greeting-item", { opacity: 0, y: 10, duration: 0.4, stagger: 0.03, ease: "power2.out" }, "-=0.2");
+        });
     </script>
 </body>
 
