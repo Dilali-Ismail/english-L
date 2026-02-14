@@ -4,194 +4,522 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide 10 - Role Play</title>
+    <title>Slide 10 - Sentence Sorter | English Introductions</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
-        }
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         :root {
-            --bg-body: #0f172a;
-            --surface: #1e293b;
-            --border-ui: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --accent: #6366f1;
+            --bg-color: #f0f2f5;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --primary-color: #4a90e2;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --zone-bg: #e1e8ed;
+            --zone-border: #bcccdc;
+            --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --instruction-color: #666;
+            --category-text: #555;
+            --pool-border: #ddd;
+            --item-border: #eee;
+        }
+
+        html.dark {
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
             --card-bg: #1e293b;
+            --zone-bg: #334155;
+            --zone-border: #475569;
+            --instruction-color: #94a3b8;
+            --category-text: #cbd5e1;
+            --pool-border: #475569;
+            --item-border: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-primary);
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-container {
-            width: 100%;
-            max-width: 600px;
-            perspective: 1000px;
-        }
-
-        .card {
-            width: 100%;
-            height: 400px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-            cursor: pointer;
-        }
-
-        .card.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 1.5rem;
-            border: 1px solid var(--border-ui);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .card-front {
-            background: var(--surface);
-        }
-
-        .card-back {
-            background: var(--accent);
-            color: white;
-            transform: rotateY(180deg);
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            background: #334155;
-            color: white;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: #475569;
-            transform: translateY(-2px);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .header-gradient {
             background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            width: 95%;
+            max-width: 1200px;
+            gap: 30px;
+            padding-bottom: 40px;
+        }
+
+        .categories-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .category-box {
+            flex: 1;
+            min-width: 250px;
+            min-height: 200px;
+            background-color: var(--zone-bg);
+            border: 2px dashed var(--zone-border);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .category-box.drag-over {
+            background-color: rgba(74, 144, 226, 0.1);
+            border-color: var(--primary-color);
+            transform: scale(1.02);
+        }
+
+        .category-header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            text-transform: capitalize;
+            color: var(--category-text);
+        }
+
+        .pool-section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            min-height: 150px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            align-content: flex-start;
+            border: 1px solid var(--pool-border);
+        }
+
+        .pool-header {
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .draggable-item {
+            background-color: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-sm);
+            cursor: grab;
+            font-size: 0.95rem;
+            border: 1px solid var(--item-border);
+            transition: transform 0.1s, box-shadow 0.2s, background-color 0.3s;
+            touch-action: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .draggable-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .draggable-item.dragging {
+            cursor: grabbing;
+            opacity: 0.9;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            position: fixed;
+            pointer-events: none;
+        }
+
+        .draggable-item.locked {
+            cursor: default;
+            background-color: #e8f8f0;
+            border-color: var(--success-color);
+            color: #2c3e50;
+            box-shadow: none;
+            pointer-events: none;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        html.dark .draggable-item.locked {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #f1f5f9;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+            border-color: var(--error-color) !important;
+            color: var(--error-color);
+        }
+
+        .returning {
+            transition: top 0.5s cubic-bezier(0.23, 1, 0.32, 1), left 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s;
+            z-index: 900;
+        }
+
+        .category-content {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-content: flex-start;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .btn-reset {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 20px;
+        }
+
+        .placeholder {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 50px;
+            border: 1px dashed #ccc;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                overflow-y: auto;
+                height: auto;
+                display: block;
+            }
+
+            .draggable-item {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+                white-space: normal;
+                text-align: center;
+            }
+
+            .category-box {
+                min-width: 100%;
+                min-height: 150px;
+            }
         }
     </style>
 </head>
 
-<body class="p-6">
+<body>
 
-    <div class="text-center space-y-6 mb-12">
-        <span
-            class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-900/30 px-4 py-1.5 rounded-full border border-indigo-800/50">
-            Slide 10 - Role Play
-        </span>
-        <h1 class="text-5xl font-black text-slate-100 tracking-tight">
-            Speaking <span class="header-gradient">Practice</span>
-        </h1>
-        <p class="text-slate-400 font-medium">Click the card to reveal the question. Ask your partner!</p>
-    </div>
-
-    <div class="card-container" onclick="flipCard()">
-        <div class="card" id="activeCard">
-            <div class="card-face card-front">
-                <div class="text-6xl mb-6">💬</div>
-                <h3 class="text-2xl font-bold text-slate-200">Values Exchange</h3>
-                <p class="text-slate-500 mt-2">Tap to reveal question</p>
-                <div class="absolute bottom-6 right-6 text-sm font-bold text-indigo-400">Card <span
-                        id="cardCount">1</span></div>
-            </div>
-            <div class="card-face card-back">
-                <div class="text-4xl font-black leading-tight" id="questionText">What is your name?</div>
-            </div>
+    <div class="header-section mt-12">
+        <div class="text-center space-y-6 mb-8 px-4">
+            <span
+                class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-400 px-4 py-1.5 rounded-full border border-indigo-100 dark:border-indigo-800/50">
+                Slide 10 - Let's do this activity!
+            </span>
+            <h1 class="text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tight transition-colors">
+                Sentence <span class="header-gradient">Sorter</span>
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium max-w-lg mx-auto transition-colors !mt-4">
+                Drag the sentences into the correct category: Formal or Informal.
+            </p>
         </div>
     </div>
 
-    <div class="flex gap-4 mt-12">
-        <button class="btn" onclick="prevCard()">← Previous</button>
-        <button class="btn bg-indigo-600 hover:bg-indigo-500" onclick="nextCard()">Next Card →</button>
+    <main>
+        <div class="categories-container" id="categoriesContainer"></div>
+        <div class="pool-section" id="poolBox">
+            <div class="pool-header">Sentence Pool</div>
+            <div id="poolContent" style="display: contents;"></div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="winModal">
+        <div class="modal">
+            <h2 class="text-2xl font-black mb-4">Great Job!</h2>
+            <p class="text-slate-600 dark:text-slate-400">You have classified all sentences correctly.</p>
+            <button class="btn-reset font-bold px-8 py-3 rounded-xl bg-indigo-600 text-white" onclick="game.init()">Play
+                Again</button>
+        </div>
     </div>
 
     <script>
-        const cards = [
-            "What is your name?",
-            "Where are you from?",
-            "Nice to meet you.",
-            "What is your job?",
-            "Are you a student?",
-            "How old are you?",
-            "What is your hobby?",
-            "What is your favorite food?",
-            "Do you have any pets?",
-            "See you later!"
-        ];
-
-        let currentIndex = 0;
-        const cardEl = document.getElementById('activeCard');
-        const qText = document.getElementById('questionText');
-        const countEl = document.getElementById('cardCount');
-
-        function updateCard() {
-            cardEl.classList.remove('flipped');
-            setTimeout(() => {
-                qText.innerText = cards[currentIndex];
-                countEl.innerText = currentIndex + 1;
-            }, 200);
-        }
-
-        function flipCard() {
-            cardEl.classList.toggle('flipped');
-        }
-
-        function nextCard() {
-            if (currentIndex < cards.length - 1) {
-                currentIndex++;
-                updateCard();
-            } else {
-                currentIndex = 0; // Loop back
-                updateCard();
-            }
-        }
-
-        function prevCard() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateCard();
-            }
-        }
-
-        // Init
-        qText.innerText = cards[0];
-
-        // Theme Support
-        window.setTheme = (mode) => {
-            if (mode === 'dark') document.documentElement.classList.add('dark');
+        const categoriesData = {
+            formal_greetings: [
+                'How do you do?',
+                'Nice to meet you',
+                'It’s a pleasure to meet you',
+                'Good morning'
+            ],
+            informal_greetings: [
+                'Hi!',
+                'What’s up?',
+                'How’s it going?',
+                'Hey there!'
+            ]
         };
-        document.documentElement.classList.add('dark');
+
+        class Game {
+            constructor() {
+                this.categoriesContainer = document.getElementById('categoriesContainer');
+                this.poolContent = document.getElementById('poolContent');
+                this.winModal = document.getElementById('winModal');
+                this.draggedItem = null;
+                this.placeholder = null;
+                this.originalParent = null;
+                this.offsetX = 0;
+                this.offsetY = 0;
+                this.handlePointerMove = this.handlePointerMove.bind(this);
+                this.handlePointerUp = this.handlePointerUp.bind(this);
+            }
+
+            init() {
+                this.winModal.classList.remove('active');
+                this.categoriesContainer.innerHTML = '';
+                this.poolContent.innerHTML = '';
+                const categoryKeys = Object.keys(categoriesData);
+                categoryKeys.forEach(key => {
+                    const box = document.createElement('div');
+                    box.className = 'category-box';
+                    box.dataset.category = key;
+                    const title = document.createElement('div');
+                    title.className = 'category-header';
+                    title.textContent = key.replace('_', ' ');
+                    const content = document.createElement('div');
+                    content.className = 'category-content';
+                    box.appendChild(title);
+                    box.appendChild(content);
+                    this.categoriesContainer.appendChild(box);
+                });
+                let items = [];
+                categoryKeys.forEach(key => {
+                    categoriesData[key].forEach(sentence => {
+                        items.push({ text: sentence, category: key });
+                    });
+                });
+                items = this.shuffle(items);
+                items.forEach(itemData => {
+                    const el = document.createElement('div');
+                    el.className = 'draggable-item';
+                    el.textContent = itemData.text;
+                    el.dataset.category = itemData.category;
+                    el.addEventListener('pointerdown', (e) => this.handlePointerDown(e, el));
+                    this.poolContent.appendChild(el);
+                });
+            }
+
+            shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            handlePointerDown(e, item) {
+                if (item.classList.contains('locked')) return;
+                e.preventDefault();
+                this.draggedItem = item;
+                this.originalParent = item.parentElement;
+                this.placeholder = document.createElement('div');
+                this.placeholder.className = 'placeholder draggable-item';
+                const rect = item.getBoundingClientRect();
+                this.placeholder.style.width = rect.width + 'px';
+                this.placeholder.style.height = rect.height + 'px';
+                this.originalParent.insertBefore(this.placeholder, item);
+                item.classList.add('dragging');
+                item.style.width = rect.width + 'px';
+                this.offsetX = e.clientX - rect.left;
+                this.offsetY = e.clientY - rect.top;
+                document.body.appendChild(item);
+                item.style.left = (e.clientX - this.offsetX) + 'px';
+                item.style.top = (e.clientY - this.offsetY) + 'px';
+                document.addEventListener('pointermove', this.handlePointerMove);
+                document.addEventListener('pointerup', this.handlePointerUp);
+            }
+
+            handlePointerMove(e) {
+                if (!this.draggedItem) return;
+                this.draggedItem.style.left = (e.clientX - this.offsetX) + 'px';
+                this.draggedItem.style.top = (e.clientY - this.offsetY) + 'px';
+                this.checkHover(e.clientX, e.clientY);
+            }
+
+            handlePointerUp(e) {
+                if (!this.draggedItem) return;
+                document.removeEventListener('pointermove', this.handlePointerMove);
+                document.removeEventListener('pointerup', this.handlePointerUp);
+                const dropTarget = this.getDropTarget(e.clientX, e.clientY);
+                if (dropTarget && dropTarget.dataset.category === this.draggedItem.dataset.category) {
+                    this.handleCorrectDrop(dropTarget);
+                } else {
+                    this.handleWrongDrop(dropTarget);
+                }
+                this.draggedItem = null;
+            }
+
+            checkHover(x, y) {
+                document.querySelectorAll('.category-box').forEach(box => box.classList.remove('drag-over'));
+                const target = this.getDropTarget(x, y);
+                if (target) target.classList.add('drag-over');
+            }
+
+            getDropTarget(x, y) {
+                this.draggedItem.hidden = true;
+                const elemBelow = document.elementFromPoint(x, y);
+                this.draggedItem.hidden = false;
+                return elemBelow ? elemBelow.closest('.category-box') : null;
+            }
+
+            handleCorrectDrop(targetBox) {
+                const item = this.draggedItem;
+                item.classList.remove('dragging');
+                item.classList.add('locked');
+                item.style.position = '';
+                item.style.left = '';
+                item.style.top = '';
+                item.style.width = '';
+                targetBox.querySelector('.category-content').appendChild(item);
+                if (this.placeholder) this.placeholder.remove();
+                targetBox.classList.remove('drag-over');
+                this.checkWin();
+            }
+
+            handleWrongDrop(targetBox) {
+                const item = this.draggedItem;
+                if (targetBox) {
+                    item.classList.add('shake');
+                    targetBox.classList.remove('drag-over');
+                }
+                item.classList.add('returning');
+                const placeholderRect = this.placeholder.getBoundingClientRect();
+                item.style.left = placeholderRect.left + 'px';
+                item.style.top = placeholderRect.top + 'px';
+                setTimeout(() => {
+                    item.classList.remove('dragging', 'returning', 'shake');
+                    item.style.position = '';
+                    item.style.left = '';
+                    item.style.top = '';
+                    item.style.width = '';
+                    this.originalParent.insertBefore(item, this.placeholder);
+                    this.placeholder.remove();
+                }, 500);
+            }
+
+            checkWin() {
+                const total = Object.values(categoriesData).flat().length;
+                const locked = document.querySelectorAll('.draggable-item.locked').length;
+                if (total === locked) {
+                    setTimeout(() => this.winModal.classList.add('active'), 500);
+                }
+            }
+        }
+
+        const game = new Game();
+        window.setTheme = function (mode) {
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        };
+        document.addEventListener('DOMContentLoaded', () => game.init());
     </script>
 </body>
 

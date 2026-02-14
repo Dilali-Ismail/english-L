@@ -1,27 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide 1 - Introduction</title>
+    <title>Slide 1 - Hello! Let’s Introduce Ourselves</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Configure Tailwind for Dark Mode -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
         }
     </script>
+
+    <script>
+        // Theme sync logic
+        window.setTheme = (mode) => {
+            if (mode === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        };
+
+        const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        function applyTheme(e) {
+            const isDark = e.matches;
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+        colorScheme.addEventListener('change', applyTheme);
+        if (colorScheme.matches) document.documentElement.classList.add('dark');
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         :root {
+            /* Light Mode Variables */
             --primary: #4f46e5;
-            --bg-page: #0f172a;
-            /* Forced Dark */
-            --text-heading: #f1f5f9;
+            --primary-glow: rgba(79, 70, 229, 0.1);
+            --bg-page: #f8fafc;
+            --text-heading: #0f172a;
+            --text-body: #475569;
+            --border-light: #e2e8f0;
+        }
+
+        html.dark {
+            /* Dark Mode Variables */
+            --bg-page: #020617;
+            /* Slate 950 */
+            --text-heading: #f8fafc;
+            /* Slate 50 */
             --text-body: #94a3b8;
+            /* Slate 400 */
+            --border-light: #1e293b;
         }
 
         body {
@@ -30,20 +69,28 @@
             color: var(--text-heading);
             min-height: 100vh;
             margin: 0;
-            overflow-y: auto;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        /* Ambient Background - Adapts for Dark Mode */
         .ambient-bg {
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.15) 0, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.15) 0, transparent 50%);
+                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.08) 0, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.08) 0, transparent 40%);
             z-index: -1;
             pointer-events: none;
+        }
+
+        html.dark .ambient-bg {
+            background:
+                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.15) 0, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.15) 0, transparent 50%);
         }
 
         .slide-content {
@@ -54,6 +101,10 @@
             padding: 4rem;
             gap: 5rem;
             align-items: center;
+        }
+
+        .text-section {
+            z-index: 10;
         }
 
         .hero-title {
@@ -86,49 +137,69 @@
         .unit-badge {
             display: inline-block;
             padding: 0.6rem 1.2rem;
-            background: rgba(79, 70, 229, 0.15);
-            border: 1px solid rgba(79, 70, 229, 0.3);
+            background: #eef2ff;
+            border: 1px solid #e0e7ff;
             border-radius: 9999px;
-            color: #818cf8;
+            color: var(--primary);
             font-size: 0.75rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.15em;
             margin-bottom: 1.5rem;
             opacity: 0;
+            transition: all 0.3s ease;
         }
 
-        .hero-image-wrapper {
+        html.dark .unit-badge {
+            background: rgba(79, 70, 229, 0.15);
+            border-color: rgba(79, 70, 229, 0.3);
+        }
+
+        .image-section {
             position: relative;
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 4rem;
-            overflow: hidden;
-            border: 8px solid #1e293b;
-            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
-            opacity: 0;
-        }
-
-        .hero-image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         @media (max-width: 1024px) {
+            body {
+                overflow-y: auto;
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+                height: auto;
+                display: block;
+            }
+
             .slide-content {
                 grid-template-columns: 1fr;
                 text-align: center;
-                gap: 3rem;
+                gap: 4rem;
+                padding: 2rem;
             }
 
             .hero-title {
                 font-size: 3.5rem;
             }
 
-            .hero-image-wrapper {
-                max-width: 400px;
-                margin: 0 auto;
+            .hero-subtitle {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .slide-content {
+                padding: 1.5rem;
+                gap: 3rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -140,48 +211,83 @@
 
     <div class="slide-content">
         <div class="text-section">
-            <div class="unit-badge">Module 01</div>
+            <div class="unit-badge">Module 01 — Getting Started</div>
             <h1 class="hero-title">
-                English <br><span class="highlight-gradient">Introductions</span>
+                Hello! <br><span class="highlight-gradient">Let’s Introduce Ourselves</span>
             </h1>
             <p class="hero-subtitle">
-                Welcome to your first session! Let's learn how to introduce ourselves and meet new people.
+                Welcome to your first session! Let's get the ball rolling on your English journey.
             </p>
 
-            <button id="start-btn"
-                class="px-10 py-5 bg-white text-slate-900 rounded-[2rem] font-black text-xl shadow-2xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-4 opacity-0">
-                <span>Start Lesson</span>
-                <span
-                    class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-sm text-white">➜</span>
-            </button>
+            <div class="flex items-center gap-6 justify-center lg:justify-start opacity-0" id="cta-line">
+                <div class="h-px w-20 bg-indigo-200 dark:bg-indigo-800"></div>
+                <span class="text-xs font-black uppercase tracking-widest text-indigo-400 dark:text-indigo-500">Ready to
+                    Begin?</span>
+            </div>
         </div>
 
         <div class="image-section">
-            <div class="hero-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop"
-                    alt="Students meeting">
-            </div>
+            <button id="start-btn"
+                class="group relative px-6 py-4 sm:px-12 sm:py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[1.2rem] sm:rounded-[2rem] font-black text-lg sm:text-2xl shadow-2xl dark:shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-4 mx-auto lg:mx-0">
+                <span>Start Session</span>
+                <span
+                    class="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] sm:text-sm group-hover:rotate-12 transition-transform">⚡</span>
+            </button>
         </div>
     </div>
 
     <script>
-        // Theme sync - though we forced dark, keep this for compatibility
-        window.setTheme = (mode) => {
-            if (mode === 'dark') document.documentElement.classList.add('dark');
-        };
-
         document.addEventListener('DOMContentLoaded', () => {
             const tl = gsap.timeline();
-            tl.to(".unit-badge", { opacity: 1, y: -10, duration: 0.5, ease: "back.out(1.7)" })
-                .to(".hero-title", { opacity: 1, y: -10, duration: 0.6, ease: "power4.out" }, "-=0.3")
-                .to(".hero-subtitle", { opacity: 1, y: -10, duration: 0.5, ease: "power3.out" }, "-=0.3")
-                .to("#start-btn", { opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }, "-=0.3")
-                .to(".hero-image-wrapper", { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" }, "-=0.6");
 
-            document.getElementById('start-btn').addEventListener('click', () => {
-                if (window.parent && typeof window.parent.nextSlide === 'function') {
-                    window.parent.nextSlide();
-                }
+            tl.to(".unit-badge", {
+                opacity: 1,
+                y: -10,
+                duration: 0.5,
+                ease: "back.out(1.7)"
+            });
+
+            tl.to(".hero-title", {
+                opacity: 1,
+                y: -15,
+                duration: 0.6,
+                ease: "power4.out"
+            }, "-=0.3");
+
+            tl.to(".hero-subtitle", {
+                opacity: 1,
+                y: -10,
+                duration: 0.5,
+                ease: "power3.out"
+            }, "-=0.3");
+
+            tl.to("#cta-line", {
+                opacity: 1,
+                duration: 0.6
+            }, "-=0.2");
+
+            tl.from("#start-btn", {
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.6,
+                ease: "back.out(1.7)"
+            }, "-=0.4");
+
+            const startBtn = document.getElementById('start-btn');
+            startBtn.addEventListener('click', () => {
+                const outTl = gsap.timeline({
+                    onComplete: () => {
+                        if (window.parent && typeof window.parent.nextSlide === 'function') {
+                            window.parent.nextSlide();
+                        }
+                    }
+                });
+
+                outTl.to(".hero-title", { y: -50, opacity: 0, scale: 1.1, duration: 0.5, ease: "power2.in" })
+                    .to(".hero-subtitle", { y: 20, opacity: 0, duration: 0.4 }, "-=0.4")
+                    .to(".unit-badge", { scale: 0.8, opacity: 0, duration: 0.3 }, "-=0.4")
+                    .to("#cta-line", { x: -30, opacity: 0, duration: 0.3 }, "-=0.3")
+                    .to(startBtn, { scale: 0, opacity: 0, duration: 0.4, ease: "back.in(1.7)" }, "-=0.4");
             });
         });
     </script>
