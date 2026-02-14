@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 2 - Warm Up Spin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --accent: #4f46e5;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 450px;
+            height: 450px;
+        }
+
+        @media (max-width: 640px) {
+            .wheel-container {
+                width: 320px;
+                height: 320px;
+            }
+        }
+
+        .spin-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            border: 4px solid white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .spin-btn:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        .marker {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            fill: #ef4444;
+            z-index: 20;
+            filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .popout {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .popout.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .popout-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 2rem;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 90%;
+            width: 600px;
+        }
+
+        .popout.active .popout-card {
+            transform: scale(1);
+        }
+
+        .highlight-yellow {
+            background-color: #fde047;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="flex flex-col items-center gap-8">
+        <h1 class="text-4xl md:text-5xl font-black text-center mb-4">
+            Warm-up activity: <br>
+            <span class="highlight-yellow">the spinning wheel</span>
+        </h1>
+
+        <div class="wheel-container">
+            <svg class="marker" viewBox="0 0 24 24">
+                <path d="M12 22L2 2h20L12 22z" />
+            </svg>
+            <svg id="wheel" viewBox="0 0 100 100" class="w-full h-full"></svg>
+            <button id="spin-btn" class="spin-btn text-indigo-600 text-sm uppercase tracking-widest">SPIN</button>
+        </div>
+    </div>
+
+    <div id="popout" class="popout">
+        <div class="popout-card shadow-2xl">
+            <h2 id="result-text" class="text-4xl md:text-6xl font-black mb-8 text-slate-800">---</h2>
+            <button onclick="closePopout()"
+                class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            "Say hello",
+            "Say your name",
+            "Where are you from?",
+            "Say your job"
+        ];
+        const colors = ['#fca5a5', '#93c5fd', '#86efac', '#fde047'];
+
+        const wheel = document.getElementById('wheel');
+        let currentRotation = 0;
+
+        function initWheel() {
+            const slice = 100 / questions.length;
+            let svgContent = '';
+
+            questions.forEach((q, i) => {
+                const startParam = i * slice;
+                const endParam = (i + 1) * slice;
+
+                // Convert percent to coordinates (simplistic for SVG circle)
+                // Using a dasharray trick or path for segments is better. 
+                // Only 4 items, we can hardcode paths or use simple math.
+                // Let's use simple paths for 4 quadrants for robustness.
+
+                const startAngle = (i * 90) * (Math.PI / 180);
+                const endAngle = ((i + 1) * 90) * (Math.PI / 180);
+                const cx = 50, cy = 50, r = 50;
+
+                const x1 = cx + r * Math.cos(startAngle);
+                const y1 = cy + r * Math.sin(startAngle);
+                const x2 = cx + r * Math.cos(endAngle);
+                const y2 = cy + r * Math.sin(endAngle);
+
+                const d = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z`;
+
+                svgContent += `<path d="${d}" fill="${colors[i]}" stroke="white" stroke-width="0.5" />`;
+
+                // Text
+                const textAngle = (i * 90) + 45;
+                const tr = r * 0.6;
+                const tx = cx + tr * Math.cos(textAngle * Math.PI / 180);
+                const ty = cy + tr * Math.sin(textAngle * Math.PI / 180);
+
+                // Shorten text for wheel
+                const shortText = q.split(' ').slice(0, 2).join(' ') + '...';
+
+                svgContent += `<text x="${tx}" y="${ty}" fill="#1e293b" font-size="6" font-weight="800" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle + 90}, ${tx}, ${ty})">${shortText}</text>`;
+            });
+
+            wheel.innerHTML = svgContent;
+        }
+
+        document.getElementById('spin-btn').addEventListener('click', () => {
+            const extraSpins = 5 + Math.random() * 5;
+            const prizeIndex = Math.floor(Math.random() * questions.length);
+            const segmentAngle = 360 / questions.length;
+
+            // Calculate target rotation to land on the prize (accounting for pointer at top)
+            // Pointer is at 270deg (top) in CSS terms if we start drawing from 0 (right).
+            // Actually our drawing starts at 0 (right) and goes clockwise.
+            // To land segment i at top (270deg / -90deg), we need to rotate the wheel such that segment i is at -90.
+            // Center of segment i is at i*90 + 45.
+            // We want (i*90 + 45) + rotation = 270 (mod 360).
+            // rotation = 270 - (i*90 + 45) = 225 - i*90.
+
+            const targetRotation = (225 - (prizeIndex * 90)) + (360 * 10); // add many spins
+
+            // Adjust for current rotation to ensure smooth accumulation
+            const currentMod = currentRotation % 360;
+            const dist = targetRotation - currentMod;
+
+            currentRotation += dist + (360 * 5); // Add 5 full spins
+
+            gsap.to('#wheel', {
+                rotation: currentRotation,
+                duration: 4,
+                ease: "power4.out",
+                transformOrigin: "50% 50%",
+                onComplete: () => showResult(questions[prizeIndex])
+            });
+        });
+
+        function showResult(text) {
+            document.getElementById('result-text').textContent = text;
+            document.getElementById('popout').classList.add('active');
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        window.closePopout = () => {
+            document.getElementById('popout').classList.remove('active');
+        }
+
+        initWheel();
+
+        // Theme sync
+        window.setTheme = (mode) => {
+            if (mode === 'dark') document.body.style.background = '#0f172a';
+            else document.body.style.background = '#f8fafc';
+        };
+    </script>
+</body>
+
+</html>

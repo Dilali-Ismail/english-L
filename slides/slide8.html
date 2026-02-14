@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 8 - Vocabulary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .accordion-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            background: white;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            background: #f1f5f9;
+            transition: background 0.2s;
+        }
+
+        .accordion-header:hover {
+            background: #e2e8f0;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+
+        .accordion-item.active .accordion-header {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .vocab-chip {
+            padding: 0.5rem 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .vocab-chip:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+
+        .green-note {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+            margin-top: 2rem;
+            font-weight: 600;
+        }
+
+        .red-note {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+
+        .highlight-yellow {
+            background-color: #fde047;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-8">
+            <a href="https://www.alloprof.qc.ca/fr/eleves/bv/anglais/jobs-occupations-vocabulary-a0115" target="_blank"
+                class="text-blue-500 underline text-sm mb-2 block">Alloprof Source</a>
+            <h1 class="text-3xl font-black text-slate-800"><span class="highlight-yellow">Vocabulary</span></h1>
+
+            <div class="green-note block mx-auto w-fit mb-2">We need the content to add to the activity</div>
+            <div class="red-note block mx-auto w-fit">This section was missing on the student power point but included
+                on teacher</div>
+        </div>
+
+        <!-- Accordion 1 -->
+        <div class="accordion-item active">
+            <div class="accordion-header" onclick="toggle(this)">
+                <span>🏥 Health & Education</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="vocab-grid">
+                    <div class="vocab-chip" onclick="speak('Professor')">Professor</div>
+                    <div class="vocab-chip" onclick="speak('Lecturer')">Lecturer</div>
+                    <div class="vocab-chip" onclick="speak('Therapist')">Therapist</div>
+                    <div class="vocab-chip" onclick="speak('Psychologist')">Psychologist</div>
+                    <div class="vocab-chip" onclick="speak('Researcher')">Researcher</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 2 -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggle(this)">
+                <span>💻 Science & Technology</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="vocab-grid">
+                    <div class="vocab-chip" onclick="speak('Computer Engineer')">Computer Engineer</div>
+                    <div class="vocab-chip" onclick="speak('Software Engineer')">Software Engineer</div>
+                    <div class="vocab-chip" onclick="speak('Developer')">Developer</div>
+                    <div class="vocab-chip" onclick="speak('Technician')">Technician</div>
+                    <div class="vocab-chip" onclick="speak('Analyst')">Analyst</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 3 -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggle(this)">
+                <span>⚖️ Government & Legal</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="vocab-grid">
+                    <div class="vocab-chip" onclick="speak('Politician')">Politician</div>
+                    <div class="vocab-chip" onclick="speak('Prime Minister')">Prime Minister</div>
+                    <div class="vocab-chip" onclick="speak('Lawyer')">Lawyer</div>
+                    <div class="vocab-chip" onclick="speak('Judge')">Judge</div>
+                    <div class="vocab-chip" onclick="speak('Police Officer')">Police Officer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 4 -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggle(this)">
+                <span>🏠 Service Industry</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="vocab-grid">
+                    <div class="vocab-chip" onclick="speak('Real Estate Agent')">Real Estate Agent</div>
+                    <div class="vocab-chip" onclick="speak('Barista')">Barista</div>
+                    <div class="vocab-chip" onclick="speak('Waiter')">Waiter</div>
+                    <div class="vocab-chip" onclick="speak('Chef')">Chef</div>
+                    <div class="vocab-chip" onclick="speak('Flight Attendant')">Flight Attendant</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 5 -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggle(this)">
+                <span>📸 Communications & Creative</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="vocab-grid">
+                    <div class="vocab-chip" onclick="speak('Photojournalist')">Photojournalist</div>
+                    <div class="vocab-chip" onclick="speak('Foreign Correspondent')">Foreign Correspondent</div>
+                    <div class="vocab-chip" onclick="speak('Editor')">Editor</div>
+                    <div class="vocab-chip" onclick="speak('Writer')">Writer</div>
+                    <div class="vocab-chip" onclick="speak('Artist')">Artist</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 6 -->
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggle(this)">
+                <span>💼 Employment-Related</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="vocab-grid">
+                    <div class="vocab-chip" onclick="speak('Career')">Career</div>
+                    <div class="vocab-chip" onclick="speak('Employment')">Employment</div>
+                    <div class="vocab-chip" onclick="speak('Job Interview')">Job Interview</div>
+                    <div class="vocab-chip" onclick="speak('Resume')">Resume</div>
+                    <div class="vocab-chip" onclick="speak('Salary')">Salary</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggle(header) {
+            const item = header.parentElement;
+            const wasActive = item.classList.contains('active');
+
+            // Close all
+            document.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('active'));
+
+            // Toggle current
+            if (!wasActive) {
+                item.classList.add('active');
+            }
+        }
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+    </script>
+</body>
+
+</html>

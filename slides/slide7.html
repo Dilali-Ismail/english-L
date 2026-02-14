@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 7 - Jobs Vocabulary 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .job-card {
+            background: #e0f2fe;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            background: #bae6fd;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .label {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #0f172a;
+            text-transform: capitalize;
+        }
+
+        .green-note {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+            margin-top: 2rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="max-w-6xl mx-auto text-center">
+        <h1 class="text-3xl font-black mb-8 text-slate-800">Jobs & Occupations (Part 2)</h1>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <!-- Jobs: electrician, plumber, carpenter, mechanic, truck driver, construction worker, cook, baker, butcher, farmer, hairdresser, barber -->
+            <div class="job-card" onclick="speak('Electrician')">
+                <div class="icon">⚡</div>
+                <div class="label">Electrician</div>
+            </div>
+            <div class="job-card" onclick="speak('Plumber')">
+                <div class="icon">🪠</div>
+                <div class="label">Plumber</div>
+            </div>
+            <div class="job-card" onclick="speak('Carpenter')">
+                <div class="icon">🔨</div>
+                <div class="label">Carpenter</div>
+            </div>
+            <div class="job-card" onclick="speak('Mechanic')">
+                <div class="icon">🔧</div>
+                <div class="label">Mechanic</div>
+            </div>
+            <div class="job-card" onclick="speak('Truck Driver')">
+                <div class="icon">🚚</div>
+                <div class="label">Truck Driver</div>
+            </div>
+            <div class="job-card" onclick="speak('Construction Worker')">
+                <div class="icon">👷</div>
+                <div class="label">Construction</div>
+            </div>
+            <div class="job-card" onclick="speak('Cook')">
+                <div class="icon">🍳</div>
+                <div class="label">Cook</div>
+            </div>
+            <div class="job-card" onclick="speak('Baker')">
+                <div class="icon">🥖</div>
+                <div class="label">Baker</div>
+            </div>
+            <div class="job-card" onclick="speak('Butcher')">
+                <div class="icon">🥩</div>
+                <div class="label">Butcher</div>
+            </div>
+            <div class="job-card" onclick="speak('Farmer')">
+                <div class="icon">🚜</div>
+                <div class="label">Farmer</div>
+            </div>
+            <div class="job-card" onclick="speak('Hairdresser')">
+                <div class="icon">💇‍♀️</div>
+                <div class="label">Hairdresser</div>
+            </div>
+            <div class="job-card" onclick="speak('Barber')">
+                <div class="icon">💈</div>
+                <div class="label">Barber</div>
+            </div>
+        </div>
+
+        <div class="green-note">We're adding audio here (Click a card to hear)</div>
+    </div>
+
+    <script>
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+    </script>
+</body>
+
+</html>

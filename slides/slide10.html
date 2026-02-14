@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 10 - Application Reading Activity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .draggable-source {
+            min-height: 100px;
+            background: #e2e8f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .drop-zone {
+            min-height: 300px;
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .drop-zone.formal {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .drop-zone.informal {
+            background: #fff7ed;
+            border-color: #fdba74;
+        }
+
+        .chip {
+            background: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            cursor: grab;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            user-select: none;
+        }
+
+        .chip:active {
+            cursor: grabbing;
+        }
+
+        .chip.correct {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .chip.wrong {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .red-note {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-6">
+            <h1 class="text-4xl font-black text-slate-800 mb-2">Reading Activity</h1>
+            <div class="red-note">We need the content to add to the activity (Implemented below)</div>
+            <p class="text-slate-500 font-bold">Drag the greetings to the correct box!</p>
+        </div>
+
+        <!-- Source Area -->
+        <div id="source" class="draggable-source">
+            <!-- Formal Items -->
+            <div class="chip" data-type="formal">Hello Mary.</div>
+            <div class="chip" data-type="formal">Good morning.</div>
+            <div class="chip" data-type="formal">How do you do?</div>
+            <div class="chip" data-type="formal">Nice to meet you.</div>
+
+            <!-- Informal Items -->
+            <div class="chip" data-type="informal">Hey!</div>
+            <div class="chip" data-type="informal">What's up?</div>
+            <div class="chip" data-type="informal">Howdy!</div>
+            <div class="chip" data-type="informal">How's it going?</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-xl font-black text-green-600 mb-3 text-center">FORMAL</h3>
+                <div id="formal-zone" class="drop-zone formal"></div>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-orange-500 mb-3 text-center">INFORMAL</h3>
+                <div id="informal-zone" class="drop-zone informal"></div>
+            </div>
+        </div>
+
+        <div class="text-center mt-6">
+            <button onclick="checkAnswers()"
+                class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg transition">Check
+                Answers</button>
+            <button onclick="reset()"
+                class="px-8 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300 ml-4 transition">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        const source = document.getElementById('source');
+        const formalZone = document.getElementById('formal-zone');
+        const informalZone = document.getElementById('informal-zone');
+
+        new Sortable(source, { group: 'shared', animation: 150 });
+        new Sortable(formalZone, { group: 'shared', animation: 150 });
+        new Sortable(informalZone, { group: 'shared', animation: 150 });
+
+        function checkAnswers() {
+            // Check Formal Zone
+            Array.from(formalZone.children).forEach(chip => {
+                if (chip.dataset.type === 'formal') chip.classList.add('correct');
+                else chip.classList.add('wrong');
+            });
+
+            // Check Informal Zone
+            Array.from(informalZone.children).forEach(chip => {
+                if (chip.dataset.type === 'informal') chip.classList.add('correct');
+                else chip.classList.add('wrong');
+            });
+        }
+
+        function reset() {
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

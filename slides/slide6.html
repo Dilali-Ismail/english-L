@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 6 - Jobs Vocabulary 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .job-card {
+            background: #e0f2fe;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            background: #bae6fd;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .label {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #0f172a;
+            text-transform: capitalize;
+        }
+
+        .green-note {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+            margin-top: 2rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="max-w-6xl mx-auto text-center">
+        <h1 class="text-3xl font-black mb-8 text-slate-800">Jobs & Occupations (Part 1)</h1>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <!-- Jobs: doctor, nurse, surgeon, paramedic, dentist, pharmacist, veterinarian, teacher, principal, counsellor, tutor -->
+            <div class="job-card" onclick="speak('Doctor')">
+                <div class="icon">👨‍⚕️</div>
+                <div class="label">Doctor</div>
+            </div>
+            <div class="job-card" onclick="speak('Nurse')">
+                <div class="icon">👩‍⚕️</div>
+                <div class="label">Nurse</div>
+            </div>
+            <div class="job-card" onclick="speak('Surgeon')">
+                <div class="icon">🏥</div>
+                <div class="label">Surgeon</div>
+            </div>
+            <div class="job-card" onclick="speak('Paramedic')">
+                <div class="icon">🚑</div>
+                <div class="label">Paramedic</div>
+            </div>
+            <div class="job-card" onclick="speak('Dentist')">
+                <div class="icon">🦷</div>
+                <div class="label">Dentist</div>
+            </div>
+            <div class="job-card" onclick="speak('Pharmacist')">
+                <div class="icon">💊</div>
+                <div class="label">Pharmacist</div>
+            </div>
+            <div class="job-card" onclick="speak('Veterinarian')">
+                <div class="icon">🐶</div>
+                <div class="label">Veterinarian</div>
+            </div>
+            <div class="job-card" onclick="speak('Teacher')">
+                <div class="icon">👩‍🏫</div>
+                <div class="label">Teacher</div>
+            </div>
+            <div class="job-card" onclick="speak('Principal')">
+                <div class="icon">🏫</div>
+                <div class="label">Principal</div>
+            </div>
+            <div class="job-card" onclick="speak('Counsellor')">
+                <div class="icon">🗣️</div>
+                <div class="label">Counsellor</div>
+            </div>
+            <div class="job-card" onclick="speak('Tutor')">
+                <div class="icon">📚</div>
+                <div class="label">Tutor</div>
+            </div>
+        </div>
+
+        <div class="green-note">We're adding audio here (Click a card to hear)</div>
+    </div>
+
+    <script>
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+    </script>
+</body>
+
+</html>
