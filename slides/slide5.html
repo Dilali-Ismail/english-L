@@ -4,170 +4,433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide 5 - Controlled Speaking</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Slide 5 - Controlled Speaking | Comic Style</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    colors: {
+                        comic: {
+                            blue: 'var(--comic-blue)',
+                            purple: 'var(--comic-purple)',
+                            mint: 'var(--comic-mint)',
+                            yellow: 'var(--comic-yellow)',
+                            border: 'var(--comic-border)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                }
+            }
         }
     </script>
     <style>
         :root {
-            --primary: #6366f1;
-            --bg-page: #0f172a;
-            /* Forced Dark */
-            --surface: #1e293b;
-            --border: #334155;
-            --text-main: #f1f5f9;
+            --comic-blue: #e0f2fe;
+            --comic-purple: #f3e8ff;
+            --comic-mint: #f0fdf4;
+            --comic-yellow: #fefce8;
+            --comic-border: #1e293b;
+            --comic-text: #1a1d3a;
+            --bg-body: #f0f2f5;
+            --paper-bg-dot: #e5e7eb;
+            --card-bg: #ffffff;
+        }
+
+        html.dark {
+            --comic-blue: #1e3a8a;
+            --comic-purple: #4c1d95;
+            --comic-mint: #064e3b;
+            --comic-yellow: #713f12;
+            --comic-border: #f1f5f9;
+            --comic-text: #f1f5f9;
+            --bg-body: #0f172a;
+            --paper-bg-dot: #334155;
+            --card-bg: #1e293b;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-page);
-            color: var(--text-main);
+            background: var(--bg-body);
+            color: var(--comic-text);
             min-height: 100vh;
-            margin: 0;
-            padding: 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-y: auto;
-            background-image:
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+            overflow-x: hidden;
+            padding: 40px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .header-gradient {
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .paper-bg {
+            position: fixed;
+            inset: 0;
+            background-color: var(--card-bg);
+            background-image: radial-gradient(var(--paper-bg-dot) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -1;
+            opacity: 0.5;
+            transition: background-color 0.3s ease;
         }
 
-        .question-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 1.5rem;
-            padding: 2rem;
+        .comic-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
             width: 100%;
-            max-width: 800px;
-            margin-bottom: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 1400px;
+            gap: 20px;
             position: relative;
-            overflow: hidden;
         }
 
-        .question-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.2);
-        }
-
-        .question-card.active {
-            border-color: var(--primary);
-            background: rgba(79, 70, 229, 0.05);
-        }
-
-        .answer-box {
-            height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: all 0.5s ease;
-            margin-top: 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .question-card.active .answer-box {
-            height: auto;
-            opacity: 1;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-        }
-
-        .reveal-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--border);
+        .hero-section {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            position: absolute;
-            right: 2rem;
-            top: 2rem;
-            transition: all 0.3s;
+            gap: 20px;
+            position: relative;
         }
 
-        .question-card.active .reveal-icon {
-            transform: rotate(180deg);
-            background: var(--primary);
-            color: white;
+        .hero-image {
+            width: 300px;
+            height: 300px;
+            border: 6px solid var(--comic-border);
+            object-fit: cover;
+            box-shadow: 15px 15px 0 rgba(30, 41, 59, 0.1);
+            transition: border-color 0.3s ease;
+        }
+
+        .doctor-img {
+            border-radius: 40px 100px 50px 120px;
+            transform: rotate(-3deg);
+        }
+
+        .teacher-img {
+            border-radius: 100px 40px 120px 50px;
+            transform: rotate(3deg);
+        }
+
+        .dialogue-center {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 10px;
+        }
+
+        .speech-bubble {
+            position: relative;
+            padding: 20px 25px;
+            border: 3px solid var(--comic-border);
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--comic-text);
+            box-shadow: 8px 8px 0 rgba(30, 41, 59, 0.08);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .bubble-shape-1 {
+            border-radius: 60px 30px 60px 30px / 30px 60px 30px 60px;
+        }
+
+        .bubble-shape-2 {
+            border-radius: 30px 60px 30px 60px / 60px 30px 60px 30px;
+        }
+
+        /* Bubble Tails */
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .to-left::after {
+            left: -20px;
+            top: 50%;
+            border-width: 10px 20px 10px 0;
+            border-color: transparent var(--comic-border) transparent transparent;
+            transform: translateY(-50%);
+        }
+
+        .to-right::after {
+            right: -20px;
+            top: 50%;
+            border-width: 10px 0 10px 20px;
+            border-color: transparent transparent transparent var(--comic-border);
+            transform: translateY(-50%);
+        }
+
+        .audio-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--comic-border);
+            box-shadow: 3px 3px 0 var(--comic-border);
+            color: var(--comic-text);
+            transition: all 0.3s ease;
+        }
+
+        .playing .audio-wave {
+            display: flex;
+        }
+
+        .playing .audio-icon {
+            display: none;
+        }
+
+        .audio-wave {
+            display: none;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .wave-bar {
+            width: 3px;
+            height: 12px;
+            background: var(--comic-border);
+            border-radius: 1px;
+            animation: wave 1s infinite ease-in-out;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                height: 4px;
+            }
+
+            50% {
+                height: 16px;
+            }
+        }
+
+        .name-tag {
+            background: var(--comic-border);
+            color: var(--card-bg);
+            padding: 5px 20px;
+            border-radius: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                padding: 20px 10px;
+                overflow-y: auto;
+                height: auto;
+                display: block;
+            }
+
+            .comic-layout {
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .hero-section {
+                width: 100%;
+                justify-content: center;
+                transform: none !important;
+            }
+
+            .hero-image {
+                width: 200px;
+                height: 200px;
+            }
+
+            .doctor-hero {
+                order: 1;
+            }
+
+            .dialogue-center {
+                order: 2;
+                width: 100%;
+                padding: 0;
+                gap: 15px;
+            }
+
+            .teacher-hero {
+                order: 3;
+            }
+
+            .speech-bubble {
+                font-size: 1.1rem;
+                padding: 15px 20px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .speech-bubble::after {
+                display: none;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="w-full max-w-4xl">
-        <div class="text-center space-y-6 mb-10">
-            <span
-                class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-900/30 dark:text-indigo-400 px-4 py-1.5 rounded-full border border-indigo-800/50">
-                Slide 05 - Controlled Speaking
-            </span>
-            <h1 class="text-5xl font-black text-slate-100 tracking-tight">
-                Practice <span class="header-gradient">Speaking</span>
-            </h1>
-            <p class="text-slate-400 font-medium">Click on the questions to reveal the answers.</p>
+
+    <div class="paper-bg"></div>
+
+    <div class="comic-layout">
+
+        <!-- Doctor (Left) -->
+        <div class="hero-section doctor-hero">
+            <div class="relative">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/026/375/249/small/ai-generative-portrait-of-confident-male-doctor-in-white-coat-and-stethoscope-standing-with-arms-crossed-and-looking-at-camera-photo.jpg"
+                    class="hero-image doctor-img" alt="Doctor Hero">
+                <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 name-tag">Speaker 1</div>
+            </div>
         </div>
 
-        <div id="questions-list">
-            <!-- Questions injected here -->
+        <!-- Dialogues (Center) -->
+        <div class="dialogue-center" id="dialogueContainer">
+            <!-- Will be populated by JS -->
         </div>
+
+        <!-- Teacher (Right) -->
+        <div class="hero-section teacher-hero">
+            <div class="relative">
+                <img src="https://i.pinimg.com/736x/17/fa/44/17fa44e8d7f0d4a341f078b6c94a31ef.jpg"
+                    class="hero-image teacher-img" alt="Teacher Hero">
+                <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 name-tag">Speaker 2</div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const questions = [
-            { q: "What is your name?", a: "My name is [Name]." },
-            { q: "Where are you from?", a: "I am from [Country]." },
-            { q: "What do you do?", a: "I am a [Job]." },
-            { q: "Do you like English?", a: "Yes, I like English very much." }
+        const dialogues = [
+            { text: "What’s your job?", gender: "male", side: "left", shape: "bubble-shape-1", color: "bg-comic-blue", sound: "" },
+            { text: "I am a ......", gender: "female", side: "right", shape: "bubble-shape-2", color: "bg-comic-mint", sound: "" },
+            { text: "Are you a .........?", gender: "female", side: "right", shape: "bubble-shape-1", color: "bg-comic-purple", sound: "" },
+            { text: "Yes, I am. No, I am not.", gender: "male", side: "left", shape: "bubble-shape-2", color: "bg-comic-yellow", sound: "" }
         ];
 
-        const list = document.getElementById('questions-list');
-        questions.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'question-card';
-            card.innerHTML = `
-                <div class="flex items-center justify-between pr-10">
-                    <h3 class="text-2xl font-bold text-slate-100">${item.q}</h3>
-                </div>
-                <div class="reveal-icon">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </div>
-                <div class="answer-box">
-                    <p class="text-xl text-indigo-400 font-semibold">${item.a}</p>
-                </div>
-            `;
-            card.onclick = () => {
-                const isActive = card.classList.contains('active');
-                // Close others if desired, or keep multiple open. Let's toggle.
-                card.classList.toggle('active');
-                if (!isActive) {
-                    // Play sound?
-                    new SpeechSynthesisUtterance(item.a).play; // Optional
-                }
-            };
-            list.appendChild(card);
+        const container = document.getElementById('dialogueContainer');
+
+        dialogues.forEach((d, index) => {
+            const bubble = document.createElement('div');
+            bubble.className = `speech-bubble ${d.shape} ${d.side === 'left' ? 'to-left' : 'to-right'} ${d.color}`;
+            bubble.innerHTML = `
+            <div class="flex items-center justify-between gap-4">
+                <span>${d.text}</span>
+                <button onclick="handleInteraction(dialogues[${index}], this)" class="audio-btn shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+                    <svg class="audio-icon w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    <div class="audio-wave">
+                        <div class="wave-bar" style="animation-delay: 0.1s"></div>
+                        <div class="wave-bar" style="animation-delay: 0.2s"></div>
+                        <div class="wave-bar" style="animation-delay: 0.3s"></div>
+                    </div>
+                </button>
+            </div>
+        `;
+            container.appendChild(bubble);
         });
 
-        // Theme Support
-        window.setTheme = (mode) => {
-            if (mode === 'dark') document.documentElement.classList.add('dark');
+        let currentAudio = null;
+        let currentBtn = null;
+
+        // Expose globally for parent navigation
+        window.setTheme = function (mode) {
+            if (mode === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         };
-        document.documentElement.classList.add('dark');
+
+        window.stopSlideAudio = function () {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            if (currentBtn) {
+                currentBtn.classList.remove('playing');
+                currentBtn = null;
+            }
+        };
+
+        function handleInteraction(dialogue, btn) {
+            if (btn.classList.contains('playing')) {
+                window.stopSlideAudio();
+                return;
+            }
+
+            window.stopSlideAudio();
+            currentBtn = btn;
+            btn.classList.add('playing');
+
+            const cleanup = () => {
+                if (currentBtn === btn) {
+                    btn.classList.remove('playing');
+                    currentBtn = null;
+                }
+            };
+
+            if (dialogue.sound && dialogue.sound.trim() !== "") {
+                const audio = new Audio(dialogue.sound);
+                currentAudio = audio;
+                audio.onended = () => {
+                    cleanup();
+                    currentAudio = null;
+                };
+                audio.play().catch(err => {
+                    console.error("Audio play failed, using TTS fallback");
+                    runTTS(dialogue.text, dialogue.gender, cleanup);
+                });
+            } else {
+                runTTS(dialogue.text, dialogue.gender, cleanup);
+            }
+        }
+
+        function runTTS(text, gender, onComplete) {
+            const synth = window.speechSynthesis;
+            const utter = new SpeechSynthesisUtterance(text);
+            const voices = synth.getVoices();
+            let preferred;
+
+            if (gender === 'male') {
+                preferred = voices.find(v => (v.name.includes('Male') || v.name.includes('David')) && v.lang.startsWith('en')) || voices[0];
+            } else {
+                preferred = voices.find(v => (v.name.includes('Female') || v.name.includes('Zira')) && v.lang.startsWith('en')) || voices[0];
+            }
+
+            utter.voice = preferred;
+            utter.rate = 0.9;
+            utter.onend = onComplete;
+            utter.onerror = onComplete;
+            synth.speak(utter);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.speechSynthesis.getVoices();
+            const tl = gsap.timeline({ delay: 0.4 });
+
+            tl.from(".doctor-hero", { x: -100, opacity: 0, duration: 1, ease: "back.out(2)" })
+                .from(".teacher-hero", { x: 100, opacity: 0, duration: 1, ease: "back.out(2)" }, "-=0.8")
+                .to(".speech-bubble", { scale: 1, opacity: 1, duration: 0.6, stagger: 0.4, ease: "back.out(2.5)" }, "-=0.5");
+
+            gsap.to(".speech-bubble", {
+                y: "-=8",
+                duration: 2,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut",
+                stagger: 0.2
+            });
+        });
     </script>
 </body>
 
