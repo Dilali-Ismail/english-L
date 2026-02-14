@@ -10,236 +10,860 @@
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+        }
+    </script>
     <style>
         :root {
             --accent: #4f46e5;
+            --accent-glow: rgba(79, 70, 229, 0.2);
+            --bg-body: #f8fafc;
+            --surface: #ffffff;
+            --border-ui: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --card-bg: #ffffff;
+        }
+
+        html.dark {
+            --bg-body: #0f172a;
+            --surface: #1e293b;
+            --border-ui: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --card-bg: #1e293b;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            overflow: hidden;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
         }
 
-        .wheel-container {
-            position: relative;
-            width: 450px;
-            height: 450px;
+        .slide-container {
+            width: 100%;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            padding: 3rem;
+            gap: 2rem;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.04) 0%, transparent 40%);
         }
 
-        @media (max-width: 640px) {
-            .wheel-container {
-                width: 320px;
-                height: 320px;
+        @media (max-width: 1024px) {
+            .slide-container {
+                display: flex;
+                flex-direction: column;
+                padding: 1.5rem 1rem;
+                min-height: 100vh;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .side-panel {
+                text-align: center;
+                align-items: center;
+                flex-shrink: 0;
+                width: 100%;
+            }
+
+            .side-panel h1 {
+                font-size: 2rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .unit-badge {
+                margin-bottom: 1rem !important;
+                padding: 0.4rem 1rem !important;
+            }
+
+            .wheel-section {
+                display: flex;
+                align-items: start;
+                justify-content: center;
+                width: 100%;
+                padding-bottom: 30px;
+            }
+
+            .wheel-wrapper {
+                width: 95%;
+                max-width: 380px;
+                margin: 0 auto;
+            }
+
+            .popout-question {
+                font-size: 3rem;
+            }
+
+            .popout-actions {
+                flex-direction: column;
+                gap: 1rem;
             }
         }
 
-        .spin-btn {
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .unit-badge {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: #eef2ff;
+            border: 1px solid #e0e7ff;
+            border-radius: 9999px;
+            color: #4f46e5;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        html.dark .unit-badge {
+            background: rgba(79, 70, 229, 0.1);
+            border-color: rgba(79, 70, 229, 0.2);
+            color: #818cf8;
+        }
+
+        .wheel-section {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 80%;
+            aspect-ratio: 1;
+            filter: drop-shadow(0 40px 80px rgba(0, 0, 0, 0.15));
+        }
+
+        #wheel-svg {
+            width: 100%;
+            height: 100%;
+            transform-origin: center;
+        }
+
+        .center-hub {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: white;
+            width: 32%;
+            aspect-ratio: 1;
+            background: var(--surface);
+            backdrop-filter: blur(12px);
             border-radius: 50%;
+            z-index: 50;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            border: 4px solid white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-            cursor: pointer;
-            transition: transform 0.2s;
+            border: 4px solid var(--surface);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 1.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        .spin-btn:active {
-            transform: translate(-50%, -50%) scale(0.95);
-        }
-
-        .marker {
+        .pointer-marker {
             position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 40px;
-            fill: #ef4444;
-            z-index: 20;
-            filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
+            left: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 60;
+            width: 45px;
+            fill: #1e1b4b;
+            filter: drop-shadow(4px 0 4px rgba(0, 0, 0, 0.1));
         }
 
-        .popout {
+        html.dark .pointer-marker {
+            fill: #f1f5f9;
+        }
+
+        .turn-banner-container {
+            margin-bottom: 2rem;
+            animation: animatePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes animatePop {
+            0% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .spin-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #4338ca 100%);
+            color: white;
+            padding: 1.25rem 2.5rem;
+            border-radius: 1.5rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px var(--accent-glow);
+            border: none;
+            cursor: pointer;
+        }
+
+        .spin-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px var(--accent-glow);
+        }
+
+        .spin-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .action-area {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s;
+            pointer-events: none;
+        }
+
+        .action-area.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .btn-secondary {
+            background: var(--btn-bg, #f1f5f9);
+            border: 1px solid var(--border-ui);
+            padding: 1.1rem 1.5rem;
+            border-radius: 1.25rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        html.dark .btn-secondary {
+            --btn-bg: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-ui);
+            color: var(--text-primary);
+        }
+
+        .win-screen {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
+            background: radial-gradient(circle at center, rgba(15, 23, 42, 0.9) 0%, rgba(2, 6, 23, 1) 100%);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            z-index: 2000;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 50;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .popout.active {
+        .win-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .win-card {
+            text-align: center;
+            transform: scale(0.8) translateY(40px);
+            transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .win-screen.active .win-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .win-title {
+            font-size: 6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #22d3ee 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.04em;
+        }
+
+        .win-subtitle {
+            color: #94a3b8;
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 4rem;
+        }
+
+        .btn-replay {
+            background: white;
+            color: #0f172a;
+            padding: 1.5rem 4rem;
+            border-radius: 2rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.4s;
+            cursor: pointer;
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.2);
+            border: none;
+        }
+
+        .btn-replay:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 60px rgba(34, 211, 238, 0.4);
+        }
+
+        .center-hub {
+            z-index: 50;
+        }
+
+        /* --- CREATIVE PROFESSIONAL POPOUT --- */
+        .popout-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(15, 23, 42, 0.85) 0%, rgba(2, 6, 23, 0.98) 100%);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .popout-overlay.active {
             opacity: 1;
             pointer-events: auto;
         }
 
         .popout-card {
-            background: white;
-            padding: 3rem;
-            border-radius: 2rem;
+            width: 90%;
+            max-width: 1000px;
+            padding: 3rem 1.5rem;
+            position: relative;
+            perspective: 1000px;
             text-align: center;
-            transform: scale(0.8);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-width: 90%;
-            width: 600px;
         }
 
-        .popout.active .popout-card {
-            transform: scale(1);
+        @media (min-width: 640px) {
+            .popout-card {
+                padding: 5rem 3rem;
+            }
         }
 
-        .highlight-yellow {
-            background-color: #fde047;
-            padding: 0 5px;
+        .popout-label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #22d3ee;
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+            margin-bottom: 2rem;
+            display: block;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .popout-question {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #22d3ee 0%, #a855f7 50%, #f43f5e 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            filter: blur(20px);
+            transform: scale(0.9);
+            letter-spacing: -0.04em;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (min-width: 640px) {
+            .popout-question {
+                font-size: 6.5rem;
+                margin-bottom: 5rem;
+                line-height: 1;
+            }
+        }
+
+        /* Animated Glowing Aura */
+        .popout-question::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: linear-gradient(135deg, #22d3ee, #a855f7, #f43f5e);
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: pulse-aura 4s infinite alternate;
+        }
+
+        @keyframes pulse-aura {
+            0% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0.6;
+                transform: scale(1.1);
+            }
+        }
+
+        .popout-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        @media (min-width: 640px) {
+            .popout-actions {
+                gap: 2.5rem;
+            }
+        }
+
+        .btn-pro {
+            position: relative;
+            padding: 1.1rem 2rem;
+            border-radius: 1.25rem;
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: white;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 640px) {
+            .btn-pro {
+                padding: 1.5rem 3.5rem;
+                border-radius: 1.5rem;
+                font-size: 1rem;
+                letter-spacing: 0.1em;
+                gap: 1rem;
+            }
+        }
+
+        .btn-keep-pro {
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+        }
+
+        .btn-remove-pro {
+            border-color: rgba(244, 63, 94, 0.3);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.1);
+        }
+
+        /* Border Shine Effect instead of Scale */
+        .btn-pro::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-pro:hover::before {
+            left: 100%;
+        }
+
+        .btn-pro:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-keep-pro:hover {
+            border-color: #22d3ee;
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.4);
+        }
+
+        .btn-remove-pro:hover {
+            border-color: #f43f5e;
+            box-shadow: 0 0 40px rgba(244, 63, 94, 0.4);
         }
     </style>
 </head>
 
 <body>
+    <div class="slide-container">
+        <div class="side-panel">
+            <span class="unit-badge">Slide 02 - Warm Up Spin</span>
 
-    <div class="flex flex-col items-center gap-8">
-        <h1 class="text-4xl md:text-5xl font-black text-center mb-4">
-            Warm-up activity: <br>
-            <span class="highlight-yellow">the spinning wheel</span>
-        </h1>
+            <h1 class="text-5xl font-extrabold mb-6 leading-tight text-slate-900 dark:text-slate-100 transition-colors">
+                Let's get to know you!</h1>
 
-        <div class="wheel-container">
-            <svg class="marker" viewBox="0 0 24 24">
-                <path d="M12 22L2 2h20L12 22z" />
-            </svg>
-            <svg id="wheel" viewBox="0 0 100 100" class="w-full h-full"></svg>
-            <button id="spin-btn" class="spin-btn text-indigo-600 text-sm uppercase tracking-widest">SPIN</button>
+            <!-- Student Picker Removed/Hidden as per requirement for just questions? 
+                 Wait, user said "same as slide 3... in other project". 
+                 In other project it HAS the student picker. 
+                 I will keep it but maybe defaulting to empty or hidden if no students? 
+                 The source code hides it if !students.length. 
+                 I will initialize with some generic "Student" or keep it hidden. -->
+            <div id="turn-banner" class="turn-banner-container w-full max-w-sm hidden">
+                <div
+                    class="bg-indigo-600 dark:bg-indigo-700 text-white rounded-3xl p-6 shadow-2xl flex items-center justify-between border-4 border-indigo-400 dark:border-indigo-500 ring-8 ring-indigo-500/10">
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Current Speaker</p>
+                        <h3 id="playerName" class="text-2xl font-black tracking-tight capitalize">---</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <button id="spin-btn" class="spin-btn">Spin wheel</button>
+                <div id="action-area" class="action-area">
+                    <button id="resume-btn" class="btn-secondary flex-1">Keep On Wheel</button>
+                    <button id="eliminate-btn"
+                        class="btn-secondary flex-1 bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-100 hover:text-rose-700">Remove
+                        Item</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="wheel-section">
+            <div class="wheel-wrapper">
+                <svg class="pointer-marker" viewBox="0 0 60 40">
+                    <path d="M60 20L0 40L10 20L0 0L60 20Z" />
+                </svg>
+                <svg id="wheel-svg" viewBox="0 0 1000 1000"></svg>
+                <div class="center-hub">
+                    <div id="hub-message" class="text-sm font-black text-indigo-600 uppercase tracking-widest">Ready?
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="popout" class="popout">
-        <div class="popout-card shadow-2xl">
-            <h2 id="result-text" class="text-4xl md:text-6xl font-black mb-8 text-slate-800">---</h2>
-            <button onclick="closePopout()"
-                class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition">Continue</button>
+    <!-- Creative professional Popout Overlay -->
+    <div id="popout-reveal" class="popout-overlay">
+        <div class="popout-card">
+            <span class="popout-label">Next Challenge Selected</span>
+            <h1 id="popout-text" class="popout-question">---</h1>
+
+            <div class="popout-actions">
+                <button id="popout-keep-btn" class="btn-pro btn-keep-pro">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6L9 17L4 12" />
+                    </svg>
+                    <span>Keep on wheel</span>
+                </button>
+                <button id="popout-remove-btn" class="btn-pro btn-remove-pro">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                    <span>Remove Item</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win Screen -->
+    <div id="win-screen" class="win-screen">
+        <div class="win-card">
+            <h1 class="win-title">Awesome!</h1>
+            <p class="win-subtitle">You've cycled through all the items!</p>
+            <button class="btn-replay" onclick="resetSession()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Start Over
+            </button>
         </div>
     </div>
 
     <script>
-        const questions = [
-            "Say hello",
-            "Say your name",
+        // Static Data
+        const ORIGINAL_QUESTIONS = [
+            "What is your name?",
             "Where are you from?",
-            "Say your job"
+            "What is your job?",
+            "Why do you study English?",
+            "Do you like coffee?",
+            "What is your hobby?"
         ];
-        const colors = ['#fca5a5', '#93c5fd', '#86efac', '#fde047'];
+        let questions = [...ORIGINAL_QUESTIONS];
 
-        const wheel = document.getElementById('wheel');
-        let currentRotation = 0;
+        // State
+        let spinning = false;
+        let selectedIx = -1;
+        const PALETTE = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#f97316', '#8b5cf6'];
 
-        function initWheel() {
-            const slice = 100 / questions.length;
-            let svgContent = '';
+        // Elements
+        const wheelSvg = document.getElementById('wheel-svg');
+        const spinBtn = document.getElementById('spin-btn');
+        const hubMessage = document.getElementById('hub-message');
+        const actionArea = document.getElementById('action-area');
+        const popoutReveal = document.getElementById('popout-reveal');
+        const popoutText = document.getElementById('popout-text');
+        const keepBtn = document.getElementById('popout-keep-btn');
+        const removeBtn = document.getElementById('popout-remove-btn');
+        const resumeBtn = document.getElementById('resume-btn');
+        const eliminateBtn = document.getElementById('eliminate-btn');
+
+        // --- AUDIO ENGINE ---
+        const audio = {
+            spin: new Audio('https://res.cloudinary.com/da63nggkh/video/upload/v1769627255/mixkit-spinner-wheel-fast-2997_t9z9y9.mp3'),
+            win: new Audio('https://res.cloudinary.com/da63nggkh/video/upload/v1769265299/mixkit-video-game-win-2016_ignsix.wav'),
+            click: new Audio('https://res.cloudinary.com/da63nggkh/video/upload/v1768925782/mixkit-select-click-1109_aocgfc.wav')
+        };
+        audio.spin.volume = 0.5; audio.win.volume = 0.4; audio.click.volume = 0.3;
+
+        function init() {
+            renderWheel();
+            spinBtn.addEventListener('click', startSpin);
+
+            // Popout Actions
+            keepBtn.addEventListener('click', () => { playClick(); nextTurn(false); });
+            removeBtn.addEventListener('click', () => { playClick(); nextTurn(true); });
+
+            // Action Area (Fallback)
+            resumeBtn.addEventListener('click', () => { playClick(); nextTurn(false); });
+            eliminateBtn.addEventListener('click', () => { playClick(); nextTurn(true); });
+        }
+
+        function playClick() {
+            audio.click.currentTime = 0;
+            audio.click.play().catch(() => { });
+        }
+
+        function renderWheel() {
+            gsap.set(wheelSvg, { rotation: 0 });
+            wheelSvg.innerHTML = '';
+            if (questions.length === 0) return;
+
+            const total = questions.length;
+            const sliceAngle = 360 / total;
+            const radius = 480;
+            const center = 500;
+
+            if (total === 1) {
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", center); circle.setAttribute("cy", center);
+                circle.setAttribute("r", radius);
+                circle.setAttribute("fill", PALETTE[0]);
+                circle.setAttribute("stroke", "#020617"); circle.setAttribute("stroke-width", "4");
+                wheelSvg.appendChild(circle);
+
+                const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                textEl.setAttribute("x", center); textEl.setAttribute("y", center - radius * 0.7);
+                textEl.setAttribute("fill", "white"); textEl.setAttribute("font-size", "28");
+                textEl.setAttribute("font-weight", "900"); textEl.setAttribute("text-anchor", "middle");
+                textEl.setAttribute("dominant-baseline", "middle");
+                textEl.textContent = questions[0];
+                wheelSvg.appendChild(textEl);
+                return;
+            }
 
             questions.forEach((q, i) => {
-                const startParam = i * slice;
-                const endParam = (i + 1) * slice;
+                const startAngle = i * sliceAngle;
+                const endAngle = (i + 1) * sliceAngle;
+                const midAngle = startAngle + (sliceAngle / 2);
+                const radStart = Math.PI * startAngle / 180;
+                const radEnd = Math.PI * endAngle / 180;
+                const x1 = center + radius * Math.cos(radStart);
+                const y1 = center + radius * Math.sin(radStart);
+                const x2 = center + radius * Math.cos(radEnd);
+                const y2 = center + radius * Math.sin(radEnd);
 
-                // Convert percent to coordinates (simplistic for SVG circle)
-                // Using a dasharray trick or path for segments is better. 
-                // Only 4 items, we can hardcode paths or use simple math.
-                // Let's use simple paths for 4 quadrants for robustness.
-
-                const startAngle = (i * 90) * (Math.PI / 180);
-                const endAngle = ((i + 1) * 90) * (Math.PI / 180);
-                const cx = 50, cy = 50, r = 50;
-
-                const x1 = cx + r * Math.cos(startAngle);
-                const y1 = cy + r * Math.sin(startAngle);
-                const x2 = cx + r * Math.cos(endAngle);
-                const y2 = cy + r * Math.sin(endAngle);
-
-                const d = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z`;
-
-                svgContent += `<path d="${d}" fill="${colors[i]}" stroke="white" stroke-width="0.5" />`;
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", `M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${sliceAngle > 180 ? 1 : 0} 1 ${x2} ${y2} Z`);
+                path.setAttribute("fill", PALETTE[i % PALETTE.length]);
+                path.setAttribute("stroke", "#020617"); path.setAttribute("stroke-width", "4");
+                wheelSvg.appendChild(path);
 
                 // Text
-                const textAngle = (i * 90) + 45;
-                const tr = r * 0.6;
-                const tx = cx + tr * Math.cos(textAngle * Math.PI / 180);
-                const ty = cy + tr * Math.sin(textAngle * Math.PI / 180);
+                const textRadius = radius * 0.7;
+                const tx = center + textRadius * Math.cos(Math.PI * midAngle / 180);
+                const ty = center + textRadius * Math.sin(Math.PI * midAngle / 180);
+                let textRotation = midAngle;
+                if (midAngle > 90 && midAngle < 270) textRotation += 180;
 
-                // Shorten text for wheel
-                const shortText = q.split(' ').slice(0, 2).join(' ') + '...';
+                const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                textEl.setAttribute("x", tx);
+                textEl.setAttribute("y", ty);
+                textEl.setAttribute("fill", "white");
+                textEl.setAttribute("font-size", total > 8 ? "19" : "24");
+                textEl.setAttribute("font-weight", "800");
+                textEl.setAttribute("text-anchor", "middle");
+                textEl.setAttribute("dominant-baseline", "middle");
+                textEl.setAttribute("transform", `rotate(${textRotation}, ${tx}, ${ty})`);
 
-                svgContent += `<text x="${tx}" y="${ty}" fill="#1e293b" font-size="6" font-weight="800" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle + 90}, ${tx}, ${ty})">${shortText}</text>`;
+                // Simple wrapping
+                const words = q.split(' ');
+                if (words.length > 1 && total < 10) {
+                    textEl.innerHTML = `<tspan x="${tx}" dy="-0.6em">${words[0]}</tspan><tspan x="${tx}" dy="1.2em">${words.slice(1).join(' ')}</tspan>`;
+                } else {
+                    textEl.textContent = q;
+                }
+                wheelSvg.appendChild(textEl);
             });
-
-            wheel.innerHTML = svgContent;
         }
 
-        document.getElementById('spin-btn').addEventListener('click', () => {
-            const extraSpins = 5 + Math.random() * 5;
-            const prizeIndex = Math.floor(Math.random() * questions.length);
-            const segmentAngle = 360 / questions.length;
+        function startSpin() {
+            if (spinning || questions.length === 0) return;
+            spinning = true;
+            spinBtn.disabled = true;
+            spinBtn.textContent = "Spinning...";
+            hubMessage.textContent = "...";
+            actionArea.classList.remove('active');
+            popoutReveal.classList.remove('active');
 
-            // Calculate target rotation to land on the prize (accounting for pointer at top)
-            // Pointer is at 270deg (top) in CSS terms if we start drawing from 0 (right).
-            // Actually our drawing starts at 0 (right) and goes clockwise.
-            // To land segment i at top (270deg / -90deg), we need to rotate the wheel such that segment i is at -90.
-            // Center of segment i is at i*90 + 45.
-            // We want (i*90 + 45) + rotation = 270 (mod 360).
-            // rotation = 270 - (i*90 + 45) = 225 - i*90.
+            if (questions.length === 1) { finalizeSpin(); return; }
 
-            const targetRotation = (225 - (prizeIndex * 90)) + (360 * 10); // add many spins
+            audio.spin.currentTime = 0;
+            audio.spin.play().catch(() => { });
 
-            // Adjust for current rotation to ensure smooth accumulation
-            const currentMod = currentRotation % 360;
-            const dist = targetRotation - currentMod;
-
-            currentRotation += dist + (360 * 5); // Add 5 full spins
-
-            gsap.to('#wheel', {
-                rotation: currentRotation,
-                duration: 4,
+            const extra = 1800 + Math.random() * 1800;
+            gsap.to(wheelSvg, {
+                rotation: `+=${extra}`,
+                duration: 5,
                 ease: "power4.out",
-                transformOrigin: "50% 50%",
-                onComplete: () => showResult(questions[prizeIndex])
+                onComplete: finalizeSpin
             });
-        });
-
-        function showResult(text) {
-            document.getElementById('result-text').textContent = text;
-            document.getElementById('popout').classList.add('active');
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
-        window.closePopout = () => {
-            document.getElementById('popout').classList.remove('active');
+        function finalizeSpin() {
+            spinning = false;
+            audio.spin.pause();
+
+            const currentRotation = gsap.getProperty(wheelSvg, "rotation");
+            const normalized = ((currentRotation % 360) + 360) % 360;
+            const winningAngle = (180 - normalized + 360) % 360;
+            selectedIx = Math.floor(winningAngle / (360 / questions.length));
+
+            const question = questions[selectedIx];
+
+            popoutText.textContent = question.toUpperCase();
+            hubMessage.textContent = "DONE!";
+            popoutReveal.classList.add('active');
+
+            const tl = gsap.timeline();
+            tl.to('.popout-label', { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" })
+                .to('.popout-question', {
+                    opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8, ease: "expo.out"
+                }, "-=0.3")
+                .to('.popout-actions', { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.7)" }, "-=0.4");
+
+            spinBtn.textContent = "Spin Again";
         }
 
-        initWheel();
+        function nextTurn(eliminate) {
+            if (eliminate) {
+                questions.splice(selectedIx, 1);
+                renderWheel();
+            }
 
-        // Theme sync
+            if (questions.length === 0) {
+                popoutReveal.classList.remove('active');
+                gsap.to('.wheel-section', { opacity: 0, scale: 0.8, duration: 0.8, ease: "power3.inOut" });
+                audio.win.currentTime = 0;
+                audio.win.play().catch(() => { });
+                setTimeout(() => { document.getElementById('win-screen').classList.add('active'); }, 400);
+                return;
+            }
+
+            hubMessage.textContent = "GO!";
+            spinBtn.disabled = false;
+            spinBtn.textContent = "Spin Wheel";
+            popoutReveal.classList.remove('active');
+            gsap.set(['.popout-label', '.popout-question', '.popout-actions'], { clearProps: "all" });
+            actionArea.classList.remove('active');
+        }
+
+        function resetSession() {
+            questions = [...ORIGINAL_QUESTIONS];
+            spinning = false;
+            selectedIx = -1;
+            document.getElementById('win-screen').classList.remove('active');
+            gsap.to('.wheel-section', { opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" });
+            hubMessage.textContent = "Ready?";
+            renderWheel();
+            spinBtn.disabled = false;
+            spinBtn.textContent = "Spin Wheel";
+            popoutReveal.classList.remove('active');
+        }
+
+        // Parent Integration
         window.setTheme = (mode) => {
-            if (mode === 'dark') document.body.style.background = '#0f172a';
-            else document.body.style.background = '#f8fafc';
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
         };
+        // Force dark for this project
+        document.documentElement.classList.add('dark');
+
+        window.stopSlideAudio = function () {
+            Object.values(audio).forEach(a => { a.pause(); a.currentTime = 0; });
+            gsap.killTweensOf(wheelSvg);
+            spinning = false;
+            spinBtn.disabled = false;
+            if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+        };
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
     </script>
 </body>
 

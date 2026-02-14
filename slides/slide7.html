@@ -8,123 +8,299 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+        }
+    </script>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            padding: 2rem;
-            min-height: 100vh;
+        :root {
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            /* Forced Dark */
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-slate: #f1f5f9;
+            --bg-body: #0f172a;
+            --card-bg: #1e293b;
+            --btn-bg: #334155;
+            --btn-border: #475569;
+            --btn-text: #94a3b8;
         }
 
-        .job-card {
-            background: #e0f2fe;
-            border-radius: 1rem;
-            padding: 1.5rem;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0, transparent 40%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-            transition: transform 0.2s;
+            justify-content: center;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .profession-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .profession-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .prof-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
             cursor: pointer;
         }
 
-        .job-card:hover {
+        .prof-card:hover {
+            border-color: var(--primary);
             transform: translateY(-5px);
-            background: #bae6fd;
+            box-shadow: 0 20px 40px -10px var(--primary-glow);
         }
 
-        .icon {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
+        .img-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            background: var(--btn-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
 
-        .label {
+        .prof-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .prof-card:hover .prof-img {
+            transform: scale(1.1);
+        }
+
+        .prof-content {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-bg);
+        }
+
+        .prof-label {
             font-weight: 800;
             font-size: 1.1rem;
-            color: #0f172a;
-            text-transform: capitalize;
+            color: var(--text-slate);
         }
 
-        .green-note {
-            background: #dcfce7;
-            border: 1px solid #86efac;
-            color: #166534;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            display: inline-block;
-            margin-top: 2rem;
-            font-weight: 600;
+        .audio-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--btn-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--btn-text);
+            border: 1px solid var(--btn-border);
+            transition: all 0.2s;
+        }
+
+        .prof-card.speaking .audio-btn {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Wave Animation */
+        .wave-container {
+            display: none;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .wave-bar {
+            width: 3px;
+            height: 12px;
+            background: currentColor;
+            border-radius: 2px;
+            animation: waveGrowth 0.6s infinite ease-in-out;
+        }
+
+        .prof-card.speaking .wave-container {
+            display: flex;
+        }
+
+        .prof-card.speaking .static-icon {
+            display: none;
+        }
+
+        @keyframes waveGrowth {
+
+            0%,
+            100% {
+                height: 6px;
+            }
+
+            50% {
+                height: 14px;
+            }
+        }
+
+        /* Subtitle */
+        #subtitleOverlay {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            border-radius: 99px;
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            text-align: center;
+            max-width: 80%;
+            z-index: 100;
+        }
+
+        #subtitleOverlay.active {
+            opacity: 1;
+        }
+
+        .word-span {
+            margin: 0 2px;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .word-span.active {
+            opacity: 1;
+            color: #818cf8;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
+    <div class="text-center space-y-6">
+        <span
+            class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-900/30 dark:text-indigo-400 px-4 py-1.5 rounded-full border border-indigo-800/50">
+            Slide 07 - Vocabulary Part 2
+        </span>
+        <h1 class="text-5xl font-black text-slate-100 tracking-tight">
+            More <span class="header-gradient">Jobs</span>
+        </h1>
+        <p class="text-slate-400 font-medium">Click on a card to hear the pronunciation.</p>
+    </div>
 
-    <div class="max-w-6xl mx-auto text-center">
-        <h1 class="text-3xl font-black mb-8 text-slate-800">Jobs & Occupations (Part 2)</h1>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <!-- Jobs: electrician, plumber, carpenter, mechanic, truck driver, construction worker, cook, baker, butcher, farmer, hairdresser, barber -->
-            <div class="job-card" onclick="speak('Electrician')">
-                <div class="icon">⚡</div>
-                <div class="label">Electrician</div>
-            </div>
-            <div class="job-card" onclick="speak('Plumber')">
-                <div class="icon">🪠</div>
-                <div class="label">Plumber</div>
-            </div>
-            <div class="job-card" onclick="speak('Carpenter')">
-                <div class="icon">🔨</div>
-                <div class="label">Carpenter</div>
-            </div>
-            <div class="job-card" onclick="speak('Mechanic')">
-                <div class="icon">🔧</div>
-                <div class="label">Mechanic</div>
-            </div>
-            <div class="job-card" onclick="speak('Truck Driver')">
-                <div class="icon">🚚</div>
-                <div class="label">Truck Driver</div>
-            </div>
-            <div class="job-card" onclick="speak('Construction Worker')">
-                <div class="icon">👷</div>
-                <div class="label">Construction</div>
-            </div>
-            <div class="job-card" onclick="speak('Cook')">
-                <div class="icon">🍳</div>
-                <div class="label">Cook</div>
-            </div>
-            <div class="job-card" onclick="speak('Baker')">
-                <div class="icon">🥖</div>
-                <div class="label">Baker</div>
-            </div>
-            <div class="job-card" onclick="speak('Butcher')">
-                <div class="icon">🥩</div>
-                <div class="label">Butcher</div>
-            </div>
-            <div class="job-card" onclick="speak('Farmer')">
-                <div class="icon">🚜</div>
-                <div class="label">Farmer</div>
-            </div>
-            <div class="job-card" onclick="speak('Hairdresser')">
-                <div class="icon">💇‍♀️</div>
-                <div class="label">Hairdresser</div>
-            </div>
-            <div class="job-card" onclick="speak('Barber')">
-                <div class="icon">💈</div>
-                <div class="label">Barber</div>
-            </div>
-        </div>
-
-        <div class="green-note">We're adding audio here (Click a card to hear)</div>
+    <div class="profession-grid" id="grid"></div>
+    <div id="subtitleOverlay">
+        <p id="subtitleText" class="text-lg font-bold text-slate-100"></p>
     </div>
 
     <script>
-        function speak(text) {
+        const jobs = [
+            { label: "Plumber", image: "plumber.png", text: "I am a Plumber. I fix pipes and water systems." },
+            { label: "Carpenter", image: "carpenter.png", text: "I am a Carpenter. I build things with wood." },
+            { label: "Firefighter", image: "firefighter.png", text: "I am a Firefighter. I put out fires." },
+            { label: "Cook", image: "aCook.png", text: "I am a Cook. I make delicious food." },
+            { label: "Barber", image: "barber.png", text: "I am a Barber. I cut men's hair." },
+            { label: "Hairdresser", image: "hairdresser.png", text: "I am a Hairdresser. I style women's hair." }
+        ];
+
+        const grid = document.getElementById('grid');
+        const subtitleOverlay = document.getElementById('subtitleOverlay');
+        const subtitleText = document.getElementById('subtitleText');
+
+        jobs.forEach((job, index) => {
+            const card = document.createElement('div');
+            card.className = 'prof-card';
+            card.innerHTML = `
+                <div class="img-container">
+                    <img src="../assets/vocab/${job.image}" alt="${job.label}" class="prof-img">
+                </div>
+                <div class="prof-content">
+                    <span class="prof-label">${job.label}</span>
+                    <div class="audio-btn">
+                        <svg class="static-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                        <div class="wave-container">
+                            <div class="wave-bar" style="animation-delay: 0s"></div>
+                            <div class="wave-bar" style="animation-delay: 0.1s"></div>
+                            <div class="wave-bar" style="animation-delay: 0.2s"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            card.onclick = () => playAudio(job, card);
+            grid.appendChild(card);
+        });
+
+        function playAudio(job, card) {
             window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'en-US';
-            window.speechSynthesis.speak(u);
+            document.querySelectorAll('.prof-card').forEach(c => c.classList.remove('speaking'));
+
+            card.classList.add('speaking');
+            subtitleOverlay.classList.add('active');
+
+            // Build words
+            const words = job.text.split(' ');
+            subtitleText.innerHTML = words.map(w => `<span class="word-span">${w}</span>`).join(' ');
+            const spans = subtitleText.querySelectorAll('.word-span');
+
+            const utterance = new SpeechSynthesisUtterance(job.text);
+            utterance.rate = 0.9;
+            utterance.onend = () => {
+                card.classList.remove('speaking');
+                subtitleOverlay.classList.remove('active');
+            };
+
+            utterance.onboundary = (event) => {
+                if (event.name === 'word') {
+                    // Approximate
+                    const duration = job.text.length;
+                    const progress = event.charIndex / duration;
+                    const spanIdx = Math.floor(progress * spans.length);
+                    spans.forEach((s, i) => s.classList.toggle('active', i === spanIdx));
+                }
+            };
+
+            window.speechSynthesis.speak(utterance);
         }
+
+        // Theme Support
+        window.setTheme = (mode) => {
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+        };
+        document.documentElement.classList.add('dark');
     </script>
 </body>
 

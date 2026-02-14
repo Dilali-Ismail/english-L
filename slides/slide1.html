@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -16,62 +16,167 @@
         }
     </script>
     <style>
+        :root {
+            --primary: #4f46e5;
+            --bg-page: #0f172a;
+            /* Forced Dark */
+            --text-heading: #f1f5f9;
+            --text-body: #94a3b8;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: white;
-            /* Clean white background as requested */
-            color: black;
+            background-color: var(--bg-page);
+            color: var(--text-heading);
             min-height: 100vh;
+            margin: 0;
+            overflow-y: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+        }
+
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.15) 0, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.15) 0, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            padding: 4rem;
+            gap: 5rem;
+            align-items: center;
         }
 
         .hero-title {
-            font-size: 5rem;
+            font-size: 5.5rem;
             font-weight: 900;
-            line-height: 1.1;
-            text-align: center;
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            color: var(--text-heading);
+            margin-bottom: 2rem;
             opacity: 0;
         }
 
-        .highlight-yellow {
-            background-color: #fca5a5;
-            /* Using a soft red/yellow highlight style or just yellow */
-            background-color: #fde047;
-            /* Yellow */
-            padding: 0 10px;
+        .highlight-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-body);
+            font-weight: 500;
+            line-height: 1.6;
+            max-width: 480px;
+            margin-bottom: 3.5rem;
+            opacity: 0;
+        }
+
+        .unit-badge {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: rgba(79, 70, 229, 0.15);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            border-radius: 9999px;
+            color: #818cf8;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 4rem;
+            overflow: hidden;
+            border: 8px solid #1e293b;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+        }
+
+        .hero-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 1024px) {
+            .slide-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .hero-title {
+                font-size: 3.5rem;
+            }
+
+            .hero-image-wrapper {
+                max-width: 400px;
+                margin: 0 auto;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="flex flex-col items-center justify-center p-10 max-w-5xl w-full">
-        <h1 class="hero-title">
-            Hello! <br>
-            <span class="highlight-yellow">Let's Introduce</span> <br>
-            Ourselves
-        </h1>
+    <div class="ambient-bg"></div>
 
-        <button id="start-btn"
-            class="mt-12 px-10 py-4 bg-blue-600 text-white text-2xl font-bold rounded-2xl shadow-xl hover:scale-105 transition-transform opacity-0">
-            Start Lesson
-        </button>
+    <div class="slide-content">
+        <div class="text-section">
+            <div class="unit-badge">Module 01</div>
+            <h1 class="hero-title">
+                English <br><span class="highlight-gradient">Introductions</span>
+            </h1>
+            <p class="hero-subtitle">
+                Welcome to your first session! Let's learn how to introduce ourselves and meet new people.
+            </p>
+
+            <button id="start-btn"
+                class="px-10 py-5 bg-white text-slate-900 rounded-[2rem] font-black text-xl shadow-2xl shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-4 opacity-0">
+                <span>Start Lesson</span>
+                <span
+                    class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-sm text-white">➜</span>
+            </button>
+        </div>
+
+        <div class="image-section">
+            <div class="hero-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop"
+                    alt="Students meeting">
+            </div>
+        </div>
     </div>
 
     <script>
-        // Theme sync (optional for this specific design since it's forced white/black)
+        // Theme sync - though we forced dark, keep this for compatibility
         window.setTheme = (mode) => {
             if (mode === 'dark') document.documentElement.classList.add('dark');
-            else document.documentElement.classList.remove('dark');
         };
 
         document.addEventListener('DOMContentLoaded', () => {
             const tl = gsap.timeline();
-            tl.to(".hero-title", { opacity: 1, y: -20, duration: 1, ease: "power4.out" })
-                .to("#start-btn", { opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }, "-=0.5");
+            tl.to(".unit-badge", { opacity: 1, y: -10, duration: 0.5, ease: "back.out(1.7)" })
+                .to(".hero-title", { opacity: 1, y: -10, duration: 0.6, ease: "power4.out" }, "-=0.3")
+                .to(".hero-subtitle", { opacity: 1, y: -10, duration: 0.5, ease: "power3.out" }, "-=0.3")
+                .to("#start-btn", { opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }, "-=0.3")
+                .to(".hero-image-wrapper", { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" }, "-=0.6");
 
             document.getElementById('start-btn').addEventListener('click', () => {
                 if (window.parent && typeof window.parent.nextSlide === 'function') {

@@ -6,173 +6,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slide 12 - Homework</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+        }
+    </script>
     <style>
+        :root {
+            --bg-body: #0f172a;
+            --surface: #1e293b;
+            --border-ui: #334155;
+            --text-main: #f1f5f9;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            overflow-y: auto;
-            padding: 2rem;
+            background-color: var(--bg-body);
+            color: var(--text-main);
             min-height: 100vh;
-        }
-
-        .wheel-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 0 auto;
-        }
-
-        .spin-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            border: 4px solid white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-            cursor: pointer;
         }
 
-        .marker {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 30px;
-            fill: #ef4444;
-            z-index: 20;
+        .header-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .pink-card {
-            background: #fdf2f8;
-            border: 1px solid #fbcfe8;
+        .btn-card {
+            background: var(--surface);
+            border: 1px solid var(--border-ui);
             border-radius: 1.5rem;
             padding: 2rem;
+            width: 100%;
+            max-width: 300px;
             text-align: center;
-            max-width: 500px;
-            margin: 2rem auto;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            items-align: center;
+            gap: 1rem;
+        }
+
+        .btn-card:hover {
+            transform: translateY(-8px);
+            border-color: #6366f1;
+            box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.3);
         }
     </style>
 </head>
 
 <body>
-
-    <div class="text-center mb-10">
-        <h1 class="text-4xl font-black text-slate-800 mb-4">Homework</h1>
-        <p class="text-xl text-slate-600">Spin the wheel and write down 3 sentences!</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto items-center">
-
-        <!-- Left: Wheel -->
-        <div>
-            <div class="wheel-container">
-                <svg class="marker" viewBox="0 0 24 24">
-                    <path d="M12 22L2 2h20L12 22z" />
-                </svg>
-                <svg id="wheel" viewBox="0 0 100 100" class="w-full h-full"></svg>
-                <button id="spin-btn" class="spin-btn text-xs text-indigo-600">SPIN</button>
-            </div>
-            <div id="result" class="text-center mt-6 text-2xl font-black text-indigo-600 min-h-[40px]"></div>
+    <div class="w-full max-w-5xl p-8 flex flex-col items-center gap-12">
+        <div class="text-center space-y-4">
+            <span
+                class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-400 bg-indigo-900/30 px-4 py-1.5 rounded-full border border-indigo-800/50">
+                Slide 12 - Homework
+            </span>
+            <h1 class="text-5xl md:text-6xl font-black text-slate-100 tracking-tight">
+                Practice at <span class="header-gradient">Home</span>
+            </h1>
+            <p class="text-slate-400 text-xl">Complete these activities before the next lesson.</p>
         </div>
 
-        <!-- Right: Padlet Link -->
-        <div class="pink-card">
-            <h2 class="text-2xl font-black text-pink-600 mb-4">Padlet Activity</h2>
-            <p class="text-slate-700 mb-6">Write 3 sentences using the emotion/intro you got from the wheel. Post it on
-                our class Padlet!</p>
-            <a href="#"
-                class="inline-block px-8 py-3 bg-pink-500 text-white font-bold rounded-xl hover:bg-pink-600 shadow-lg hover:shadow-pink-500/30 transition transform hover:-translate-y-1">
-                Open Padlet
+        <div class="flex flex-wrap justify-center gap-8 w-full">
+            <a href="#" class="btn-card group">
+                <div
+                    class="w-16 h-16 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-3xl mx-auto group-hover:scale-110 transition-transform">
+                    ✏️
+                </div>
+                <h3 class="text-2xl font-bold">Wordwall</h3>
+                <p class="text-sm text-slate-500 font-semibold">Match definitions and practice vocabulary.</p>
+            </a>
+
+            <a href="#" class="btn-card group">
+                <div
+                    class="w-16 h-16 rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-3xl mx-auto group-hover:scale-110 transition-transform">
+                    📝
+                </div>
+                <h3 class="text-2xl font-bold">Padlet</h3>
+                <p class="text-sm text-slate-500 font-semibold">Write your introduction and share with class.</p>
+            </a>
+
+            <a href="#" class="btn-card group">
+                <div
+                    class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mx-auto group-hover:scale-110 transition-transform">
+                    🎮
+                </div>
+                <h3 class="text-2xl font-bold">Review Game</h3>
+                <p class="text-sm text-slate-500 font-semibold">Play the sentence builder game again.</p>
             </a>
         </div>
-
     </div>
 
     <script>
-        const questions = [
-            "I am happy",
-            "I am excited",
-            "I am tired",
-            "I am nervous",
-            "I am hungry",
-            "I am sad"
-        ];
-        const colors = ['#fca5a5', '#93c5fd', '#86efac', '#fde047', '#d8b4fe', '#fdba74'];
+        gsap.from(".btn-card", { y: 40, opacity: 0, duration: 0.8, stagger: 0.15, ease: "power2.out" });
 
-        const wheel = document.getElementById('wheel');
-        let currentRotation = 0;
-
-        function initWheel() {
-            let svgContent = '';
-            const slice = 360 / questions.length;
-
-            questions.forEach((q, i) => {
-                const startAngle = (i * slice) * (Math.PI / 180);
-                const endAngle = ((i + 1) * slice) * (Math.PI / 180);
-                const cx = 50, cy = 50, r = 50;
-
-                const x1 = cx + r * Math.cos(startAngle);
-                const y1 = cy + r * Math.sin(startAngle);
-                const x2 = cx + r * Math.cos(endAngle);
-                const y2 = cy + r * Math.sin(endAngle);
-
-                const d = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z`;
-                svgContent += `<path d="${d}" fill="${colors[i]}" stroke="white" stroke-width="0.5" />`;
-
-                // Text placement
-                const textAngle = (i * slice) + (slice / 2);
-                const tr = r * 0.65;
-                const tx = cx + tr * Math.cos(textAngle * Math.PI / 180);
-                const ty = cy + tr * Math.sin(textAngle * Math.PI / 180);
-                svgContent += `<text x="${tx}" y="${ty}" fill="#1e293b" font-size="4" font-weight="800" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textAngle + 90}, ${tx}, ${ty})">${q}</text>`;
-            });
-            wheel.innerHTML = svgContent;
-        }
-
-        document.getElementById('spin-btn').addEventListener('click', () => {
-            const prizeIndex = Math.floor(Math.random() * questions.length);
-            const slice = 360 / questions.length;
-
-            // Target calculation (similar to slide 2 but adjusted for generic n items)
-            // Top is 270 (-90). Center of item i is i*slice + slice/2.
-            // We want (i*slice + slice/2) + rot = 270
-            // rot = 270 - (i*slice + slice/2)
-
-            const centerAngle = (prizeIndex * slice) + (slice / 2);
-            const targetRotation = (270 - centerAngle) + (360 * 5);
-
-            const currentMod = currentRotation % 360;
-            const dist = targetRotation - currentMod;
-            currentRotation += dist + (360 * 5);
-
-            gsap.to('#wheel', {
-                rotation: currentRotation,
-                duration: 4,
-                ease: "power4.out",
-                transformOrigin: "50% 50%",
-                onComplete: () => {
-                    const res = questions[prizeIndex];
-                    document.getElementById('result').textContent = res;
-                    confetti({ origin: { y: 0.7 } });
-                }
-            });
-        });
-
-        initWheel();
+        window.setTheme = (mode) => {
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+        };
+        document.documentElement.classList.add('dark');
     </script>
 </body>
 

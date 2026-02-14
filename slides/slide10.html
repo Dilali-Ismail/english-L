@@ -4,155 +4,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide 10 - Application Reading Activity</title>
+    <title>Slide 10 - Role Play</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
         rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+        }
+    </script>
     <style>
+        :root {
+            --bg-body: #0f172a;
+            --surface: #1e293b;
+            --border-ui: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --card-bg: #1e293b;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            padding: 2rem;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
             min-height: 100vh;
-        }
-
-        .draggable-source {
-            min-height: 100px;
-            background: #e2e8f0;
-            border-radius: 1rem;
-            padding: 1rem;
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .drop-zone {
-            min-height: 300px;
-            background: white;
-            border-radius: 1rem;
-            padding: 1rem;
-            border: 2px dashed #cbd5e1;
+        .card-container {
+            width: 100%;
+            max-width: 600px;
+            perspective: 1000px;
         }
 
-        .drop-zone.formal {
-            background: #f0fdf4;
-            border-color: #86efac;
+        .card {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
         }
 
-        .drop-zone.informal {
-            background: #fff7ed;
-            border-color: #fdba74;
+        .card.flipped {
+            transform: rotateY(180deg);
         }
 
-        .chip {
-            background: white;
-            padding: 0.75rem 1.25rem;
-            border-radius: 2rem;
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.5rem;
+            border: 1px solid var(--border-ui);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .card-front {
+            background: var(--surface);
+        }
+
+        .card-back {
+            background: var(--accent);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
             font-weight: 700;
-            cursor: grab;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            user-select: none;
+            background: #334155;
+            color: white;
+            transition: all 0.2s;
         }
 
-        .chip:active {
-            cursor: grabbing;
+        .btn:hover {
+            background: #475569;
+            transform: translateY(-2px);
         }
 
-        .chip.correct {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .chip.wrong {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .red-note {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            display: inline-block;
-            margin-bottom: 1rem;
-            font-weight: 600;
+        .header-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
 
-<body>
+<body class="p-6">
 
-    <div class="max-w-5xl mx-auto">
-        <div class="text-center mb-6">
-            <h1 class="text-4xl font-black text-slate-800 mb-2">Reading Activity</h1>
-            <div class="red-note">We need the content to add to the activity (Implemented below)</div>
-            <p class="text-slate-500 font-bold">Drag the greetings to the correct box!</p>
-        </div>
+    <div class="text-center space-y-6 mb-12">
+        <span
+            class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-900/30 px-4 py-1.5 rounded-full border border-indigo-800/50">
+            Slide 10 - Role Play
+        </span>
+        <h1 class="text-5xl font-black text-slate-100 tracking-tight">
+            Speaking <span class="header-gradient">Practice</span>
+        </h1>
+        <p class="text-slate-400 font-medium">Click the card to reveal the question. Ask your partner!</p>
+    </div>
 
-        <!-- Source Area -->
-        <div id="source" class="draggable-source">
-            <!-- Formal Items -->
-            <div class="chip" data-type="formal">Hello Mary.</div>
-            <div class="chip" data-type="formal">Good morning.</div>
-            <div class="chip" data-type="formal">How do you do?</div>
-            <div class="chip" data-type="formal">Nice to meet you.</div>
-
-            <!-- Informal Items -->
-            <div class="chip" data-type="informal">Hey!</div>
-            <div class="chip" data-type="informal">What's up?</div>
-            <div class="chip" data-type="informal">Howdy!</div>
-            <div class="chip" data-type="informal">How's it going?</div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-                <h3 class="text-xl font-black text-green-600 mb-3 text-center">FORMAL</h3>
-                <div id="formal-zone" class="drop-zone formal"></div>
+    <div class="card-container" onclick="flipCard()">
+        <div class="card" id="activeCard">
+            <div class="card-face card-front">
+                <div class="text-6xl mb-6">💬</div>
+                <h3 class="text-2xl font-bold text-slate-200">Values Exchange</h3>
+                <p class="text-slate-500 mt-2">Tap to reveal question</p>
+                <div class="absolute bottom-6 right-6 text-sm font-bold text-indigo-400">Card <span
+                        id="cardCount">1</span></div>
             </div>
-            <div>
-                <h3 class="text-xl font-black text-orange-500 mb-3 text-center">INFORMAL</h3>
-                <div id="informal-zone" class="drop-zone informal"></div>
+            <div class="card-face card-back">
+                <div class="text-4xl font-black leading-tight" id="questionText">What is your name?</div>
             </div>
-        </div>
-
-        <div class="text-center mt-6">
-            <button onclick="checkAnswers()"
-                class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg transition">Check
-                Answers</button>
-            <button onclick="reset()"
-                class="px-8 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300 ml-4 transition">Reset</button>
         </div>
     </div>
 
+    <div class="flex gap-4 mt-12">
+        <button class="btn" onclick="prevCard()">← Previous</button>
+        <button class="btn bg-indigo-600 hover:bg-indigo-500" onclick="nextCard()">Next Card →</button>
+    </div>
+
     <script>
-        const source = document.getElementById('source');
-        const formalZone = document.getElementById('formal-zone');
-        const informalZone = document.getElementById('informal-zone');
+        const cards = [
+            "What is your name?",
+            "Where are you from?",
+            "Nice to meet you.",
+            "What is your job?",
+            "Are you a student?",
+            "How old are you?",
+            "What is your hobby?",
+            "What is your favorite food?",
+            "Do you have any pets?",
+            "See you later!"
+        ];
 
-        new Sortable(source, { group: 'shared', animation: 150 });
-        new Sortable(formalZone, { group: 'shared', animation: 150 });
-        new Sortable(informalZone, { group: 'shared', animation: 150 });
+        let currentIndex = 0;
+        const cardEl = document.getElementById('activeCard');
+        const qText = document.getElementById('questionText');
+        const countEl = document.getElementById('cardCount');
 
-        function checkAnswers() {
-            // Check Formal Zone
-            Array.from(formalZone.children).forEach(chip => {
-                if (chip.dataset.type === 'formal') chip.classList.add('correct');
-                else chip.classList.add('wrong');
-            });
-
-            // Check Informal Zone
-            Array.from(informalZone.children).forEach(chip => {
-                if (chip.dataset.type === 'informal') chip.classList.add('correct');
-                else chip.classList.add('wrong');
-            });
+        function updateCard() {
+            cardEl.classList.remove('flipped');
+            setTimeout(() => {
+                qText.innerText = cards[currentIndex];
+                countEl.innerText = currentIndex + 1;
+            }, 200);
         }
 
-        function reset() {
-            location.reload();
+        function flipCard() {
+            cardEl.classList.toggle('flipped');
         }
+
+        function nextCard() {
+            if (currentIndex < cards.length - 1) {
+                currentIndex++;
+                updateCard();
+            } else {
+                currentIndex = 0; // Loop back
+                updateCard();
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            }
+        }
+
+        // Init
+        qText.innerText = cards[0];
+
+        // Theme Support
+        window.setTheme = (mode) => {
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+        };
+        document.documentElement.classList.add('dark');
     </script>
 </body>
 

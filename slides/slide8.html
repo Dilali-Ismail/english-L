@@ -4,246 +4,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide 8 - Vocabulary</title>
+    <title>Slide 8 - Guess Who Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+        }
+    </script>
     <style>
+        :root {
+            --bg-body: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --border-ui: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --question-bg: rgba(30, 41, 59, 0.5);
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            padding: 2rem;
-            min-height: 100vh;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0, transparent 40%);
         }
 
-        .accordion-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            background: white;
-            margin-bottom: 1rem;
+        .dashed-border {
+            border-top: 2px dashed var(--border-ui);
+            border-bottom: 2px dashed var(--border-ui);
+            position: relative;
+        }
+
+        .question-mask {
+            height: 80px;
             overflow: hidden;
-        }
-
-        .accordion-header {
-            padding: 1.5rem;
-            cursor: pointer;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            font-weight: 800;
-            font-size: 1.1rem;
-            background: #f1f5f9;
-            transition: background 0.2s;
+            justify-content: center;
+            position: relative;
+            width: 100%;
         }
 
-        .accordion-header:hover {
-            background: #e2e8f0;
-        }
-
-        .accordion-content {
-            display: none;
-            padding: 1.5rem;
-            background: white;
-        }
-
-        .accordion-item.active .accordion-content {
-            display: block;
-        }
-
-        .accordion-item.active .accordion-header {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .vocab-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-
-        .vocab-chip {
-            padding: 0.5rem 1rem;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: 600;
+        .prof-card {
+            background: var(--surface);
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             cursor: pointer;
-            transition: all 0.2s;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--card-shadow);
         }
 
-        .vocab-chip:hover {
-            background: #dcfce7;
-            border-color: #86efac;
+        .prof-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+            background: var(--surface-hover);
         }
 
-        .green-note {
-            background: #dcfce7;
-            border: 1px solid #86efac;
-            color: #166534;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            display: inline-block;
-            margin-top: 2rem;
-            font-weight: 600;
+        .prof-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .red-note {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            display: inline-block;
-            margin-top: 1rem;
-            font-weight: 600;
+        .prof-card span {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
         }
 
-        .highlight-yellow {
-            background-color: #fde047;
-            padding: 0 5px;
+        /* Animation Classes */
+        .card-shake {
+            animation: shake 0.6s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translateX(-4px);
+            }
+
+            20%,
+            80% {
+                transform: translateX(8px);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translateX(-12px);
+            }
+
+            40%,
+            60% {
+                transform: translateX(12px);
+            }
+        }
+
+        .correct-glow {
+            animation: correctGlow 0.8s ease-out forwards;
+        }
+
+        @keyframes correctGlow {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+                filter: brightness(1.2);
+                border-color: #10b981;
+            }
+
+            100% {
+                transform: scale(0.9);
+                opacity: 0;
+                filter: blur(4px);
+            }
+        }
+
+        .wrong-x {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            font-size: 4rem;
+            font-weight: 900;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .show-x {
+            opacity: 1;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="max-w-4xl mx-auto">
-        <div class="text-center mb-8">
-            <a href="https://www.alloprof.qc.ca/fr/eleves/bv/anglais/jobs-occupations-vocabulary-a0115" target="_blank"
-                class="text-blue-500 underline text-sm mb-2 block">Alloprof Source</a>
-            <h1 class="text-3xl font-black text-slate-800"><span class="highlight-yellow">Vocabulary</span></h1>
+    <div class="text-center space-y-4 mt-8">
+        <span
+            class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-900/30 px-4 py-1.5 rounded-full border border-indigo-800/50">
+            Slide 08 - Game
+        </span>
+        <h1 class="text-4xl md:text-5xl font-black text-slate-100 tracking-tight">
+            Who <span class="header-gradient">Am I?</span>
+        </h1>
+    </div>
 
-            <div class="green-note block mx-auto w-fit mb-2">We need the content to add to the activity</div>
-            <div class="red-note block mx-auto w-fit">This section was missing on the student power point but included
-                on teacher</div>
-        </div>
-
-        <!-- Accordion 1 -->
-        <div class="accordion-item active">
-            <div class="accordion-header" onclick="toggle(this)">
-                <span>🏥 Health & Education</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content">
-                <div class="vocab-grid">
-                    <div class="vocab-chip" onclick="speak('Professor')">Professor</div>
-                    <div class="vocab-chip" onclick="speak('Lecturer')">Lecturer</div>
-                    <div class="vocab-chip" onclick="speak('Therapist')">Therapist</div>
-                    <div class="vocab-chip" onclick="speak('Psychologist')">Psychologist</div>
-                    <div class="vocab-chip" onclick="speak('Researcher')">Researcher</div>
-                </div>
+    <!-- Question Area -->
+    <section class="dashed-border py-6 mt-8 bg-[var(--question-bg)]">
+        <div class="max-w-4xl mx-auto px-8">
+            <div class="question-mask">
+                <h2 id="questionText" class="text-2xl md:text-3xl font-extrabold text-slate-100 text-center">
+                    <!-- Question injected here -->
+                </h2>
             </div>
         </div>
+    </section>
 
-        <!-- Accordion 2 -->
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggle(this)">
-                <span>💻 Science & Technology</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content">
-                <div class="vocab-grid">
-                    <div class="vocab-chip" onclick="speak('Computer Engineer')">Computer Engineer</div>
-                    <div class="vocab-chip" onclick="speak('Software Engineer')">Software Engineer</div>
-                    <div class="vocab-chip" onclick="speak('Developer')">Developer</div>
-                    <div class="vocab-chip" onclick="speak('Technician')">Technician</div>
-                    <div class="vocab-chip" onclick="speak('Analyst')">Analyst</div>
-                </div>
-            </div>
+    <!-- Game Grid -->
+    <main class="max-w-6xl mx-auto px-8 py-10">
+        <div id="cardGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            <!-- Cards injected by JS -->
         </div>
+    </main>
 
-        <!-- Accordion 3 -->
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggle(this)">
-                <span>⚖️ Government & Legal</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content">
-                <div class="vocab-grid">
-                    <div class="vocab-chip" onclick="speak('Politician')">Politician</div>
-                    <div class="vocab-chip" onclick="speak('Prime Minister')">Prime Minister</div>
-                    <div class="vocab-chip" onclick="speak('Lawyer')">Lawyer</div>
-                    <div class="vocab-chip" onclick="speak('Judge')">Judge</div>
-                    <div class="vocab-chip" onclick="speak('Police Officer')">Police Officer</div>
-                </div>
-            </div>
+    <!-- Victory Screen -->
+    <div id="victoryOverlay"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-xl opacity-0 pointer-events-none transition-all duration-1000">
+        <div class="text-center p-8 max-w-lg">
+            <div class="text-8xl mb-8">🎉</div>
+            <h2 class="text-5xl font-black text-slate-100 mb-6">Excellent!</h2>
+            <p class="text-xl text-slate-400 mb-10">You identified all professions.</p>
+            <button onclick="startGame()"
+                class="px-12 py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl text-xl shadow-lg transition-transform active:scale-95">
+                Play Again
+            </button>
         </div>
-
-        <!-- Accordion 4 -->
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggle(this)">
-                <span>🏠 Service Industry</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content">
-                <div class="vocab-grid">
-                    <div class="vocab-chip" onclick="speak('Real Estate Agent')">Real Estate Agent</div>
-                    <div class="vocab-chip" onclick="speak('Barista')">Barista</div>
-                    <div class="vocab-chip" onclick="speak('Waiter')">Waiter</div>
-                    <div class="vocab-chip" onclick="speak('Chef')">Chef</div>
-                    <div class="vocab-chip" onclick="speak('Flight Attendant')">Flight Attendant</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Accordion 5 -->
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggle(this)">
-                <span>📸 Communications & Creative</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content">
-                <div class="vocab-grid">
-                    <div class="vocab-chip" onclick="speak('Photojournalist')">Photojournalist</div>
-                    <div class="vocab-chip" onclick="speak('Foreign Correspondent')">Foreign Correspondent</div>
-                    <div class="vocab-chip" onclick="speak('Editor')">Editor</div>
-                    <div class="vocab-chip" onclick="speak('Writer')">Writer</div>
-                    <div class="vocab-chip" onclick="speak('Artist')">Artist</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Accordion 6 -->
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggle(this)">
-                <span>💼 Employment-Related</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content">
-                <div class="vocab-grid">
-                    <div class="vocab-chip" onclick="speak('Career')">Career</div>
-                    <div class="vocab-chip" onclick="speak('Employment')">Employment</div>
-                    <div class="vocab-chip" onclick="speak('Job Interview')">Job Interview</div>
-                    <div class="vocab-chip" onclick="speak('Resume')">Resume</div>
-                    <div class="vocab-chip" onclick="speak('Salary')">Salary</div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <script>
-        function toggle(header) {
-            const item = header.parentElement;
-            const wasActive = item.classList.contains('active');
+        const professions = [
+            { id: "doctor", label: "Doctor", img: "../assets/vocab/doctor.png", desc: "I work in a hospital and help sick people." },
+            { id: "nurse", label: "Nurse", img: "../assets/vocab/nurse.png", desc: "I care for patients in a hospital." },
+            { id: "dentist", label: "Dentist", img: "../assets/vocab/dentist.png", desc: "I fix people's teeth." },
+            { id: "pilot", label: "Pilot", img: "../assets/vocab/doctor.png", desc: "I fly airplanes." }, /* Placeholder image if pilot missing, handled below */
+            { id: "cook", label: "Cook", img: "../assets/vocab/aCook.png", desc: "I make delicious food in a restaurant." },
+            { id: "firefighter", label: "Firefighter", img: "../assets/vocab/firefighter.png", desc: "I put out fires." },
+            { id: "police", label: "Police", img: "../assets/vocab/doctor.png", desc: "I catch bad guys." }, /* Placeholder */
+            { id: "teacher", label: "Teacher", img: "../assets/vocab/tutor.png", desc: "I teach students in a school." },
+            { id: "farmer", label: "Farmer", img: "../assets/vocab/doctor.png", desc: "I grow food on a farm." }, /* Placeholder */
+            { id: "artist", label: "Artist", img: "../assets/vocab/doctor.png", desc: "I paint pictures." } /* Placeholder */
+        ];
 
-            // Close all
-            document.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('active'));
+        // Filter to ensure we have images or use placeholders
+        // Using valid ones from our asset copy
+        const activeProfessions = [
+            { id: "doctor", label: "Doctor", img: "../assets/vocab/doctor.png", desc: "I work in a hospital and help sick people." },
+            { id: "nurse", label: "Nurse", img: "../assets/vocab/nurse.png", desc: "I care for patients in a hospital." },
+            { id: "dentist", label: "Dentist", img: "../assets/vocab/dentist.png", desc: "I fix people's teeth." },
+            { id: "cook", label: "Cook", img: "../assets/vocab/aCook.png", desc: "I make delicious food in a restaurant." },
+            { id: "firefighter", label: "Firefighter", img: "../assets/vocab/firefighter.png", desc: "I put out fires." },
+            { id: "tutor", label: "Tutor", img: "../assets/vocab/tutor.png", desc: "I teach students." },
+            { id: "plumber", label: "Plumber", img: "../assets/vocab/plumber.png", desc: "I fix water pipes." },
+            { id: "hairdresser", label: "Hairdresser", img: "../assets/vocab/hairdresser.png", desc: "I cut and style hair." }
+        ];
 
-            // Toggle current
-            if (!wasActive) {
-                item.classList.add('active');
+
+        let state = { shuffled: [], curIndex: 0, busy: false };
+
+        function startGame() {
+            gsap.to("#victoryOverlay", { opacity: 0, pointerEvents: "none", duration: 0.5 });
+            state.curIndex = 0;
+            state.shuffled = [...activeProfessions].sort(() => Math.random() - 0.5);
+            renderCards();
+            showNext();
+        }
+
+        function renderCards() {
+            const grid = document.getElementById('cardGrid');
+            grid.innerHTML = '';
+            activeProfessions.forEach((p, idx) => {
+                const card = document.createElement('div');
+                card.id = `card-${p.id}`;
+                card.className = 'prof-card';
+                card.onclick = () => handleChoice(p.id, card);
+                card.innerHTML = `
+                    <div class="w-full h-[140px] flex items-center justify-center bg-white/5 rounded-lg overflow-hidden">
+                         <img src="${p.img}" alt="${p.label}" onerror="this.src='https://via.placeholder.com/150?text=${p.label}'">
+                    </div>
+                    <span>${p.label}</span>
+                    <div class="wrong-x">❌</div>
+                `;
+                grid.appendChild(card);
+                gsap.from(card, { opacity: 0, y: 30, duration: 0.5, delay: idx * 0.05 });
+            });
+        }
+
+        function showNext() {
+            if (state.curIndex >= activeProfessions.length) { endGame(); return; }
+            const q = state.shuffled[state.curIndex];
+            animateQuestionSlide(q.desc);
+        }
+
+        function animateQuestionSlide(newText) {
+            const el = document.getElementById('questionText');
+            gsap.to(el, {
+                x: 100, opacity: 0, duration: 0.3, ease: "power2.in",
+                onComplete: () => {
+                    el.textContent = newText;
+                    gsap.fromTo(el, { x: -100, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
+                }
+            });
+        }
+
+        function handleChoice(id, el) {
+            if (state.busy) return;
+            const correctObj = state.shuffled[state.curIndex];
+
+            if (id === correctObj.id) {
+                state.busy = true;
+                el.classList.add('correct-glow');
+                setTimeout(() => {
+                    el.style.opacity = '0'; el.style.pointerEvents = 'none';
+                    state.curIndex++; state.busy = false; showNext();
+                }, 800);
+            } else {
+                state.busy = true;
+                el.classList.add('card-shake');
+                el.querySelector('.wrong-x').classList.add('show-x');
+                setTimeout(() => {
+                    el.classList.remove('card-shake');
+                    el.querySelector('.wrong-x').classList.remove('show-x');
+                    state.busy = false;
+                }, 600);
             }
         }
 
-        function speak(text) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'en-US';
-            window.speechSynthesis.speak(u);
+        function endGame() {
+            gsap.to("#victoryOverlay", { opacity: 1, pointerEvents: "auto", duration: 1 });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         }
+
+        // Theme Support
+        window.setTheme = (mode) => {
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+        };
+        document.documentElement.classList.add('dark');
+
+        document.addEventListener('DOMContentLoaded', startGame);
     </script>
 </body>
 

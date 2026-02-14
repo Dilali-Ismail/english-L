@@ -4,136 +4,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide 9 - Greetings</title>
+    <title>Slide 9 - Sentence Scramble</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+        }
+    </script>
     <style>
+        :root {
+            --bg-body: #0f172a;
+            --surface: #1e293b;
+            --border-ui: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+
+            --tile-bg: #334155;
+            --tile-text: #f1f5f9;
+            --tile-locked-bg: #14532d;
+            --tile-locked-text: #86efac;
+            --tile-border: #475569;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            padding: 2rem;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
             min-height: 100vh;
-        }
-
-        .red-header {
-            background: #ef4444;
-            color: white;
-            padding: 1rem;
-            border-radius: 1rem 1rem 0 0;
-            text-align: center;
-            font-weight: 800;
-            font-size: 1.2rem;
-        }
-
-        .col-container {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-top: none;
-            border-radius: 0 0 1rem 1rem;
-            padding: 1.5rem;
+            margin: 0;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        .greeting-item {
-            padding: 0.75rem 1rem;
-            background: #f8fafc;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0, transparent 40%);
         }
 
-        .greeting-item:hover {
-            background: #e0f2fe;
-            color: #0284c7;
-            padding-left: 1.25rem;
+        .game-container {
+            background-color: var(--surface);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 900px;
+            border: 1px solid var(--border-ui);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            min-height: 300px;
         }
 
-        .green-note {
-            background: #dcfce7;
-            border: 1px solid #86efac;
-            color: #166534;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            display: inline-block;
-            margin-bottom: 2rem;
-            font-weight: 600;
-            text-align: center;
+        .sentence-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            min-height: 120px;
+            align-items: center;
+            padding: 2rem;
+            border-radius: 1rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 2px dashed var(--border-ui);
+            transition: all 0.3s ease;
+        }
+
+        .word-tile {
+            background-color: var(--tile-bg);
+            color: var(--tile-text);
+            border: 1px solid var(--tile-border);
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: grab;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, background-color 0.2s;
+            touch-action: none;
+        }
+
+        .word-tile:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .word-tile:active {
+            cursor: grabbing;
+        }
+
+        .word-tile.locked {
+            background-color: var(--tile-locked-bg);
+            color: var(--tile-locked-text);
+            border-color: #22c55e;
+            cursor: default;
+            transform: none !important;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #victory-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            z-index: 50;
+            border-radius: 1.5rem;
+        }
+
+        #victory-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="max-w-5xl mx-auto">
-        <div class="text-center mb-6">
-            <h1 class="text-4xl font-black text-slate-800 mb-4">Formal and Informal Greetings</h1>
-            <div class="green-note">We're adding audio here! (Click phrases to listen)</div>
+    <div class="text-center space-y-4 mb-8">
+        <span
+            class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-900/30 px-4 py-1.5 rounded-full border border-indigo-800/50">
+            Slide 09 - Practice
+        </span>
+        <h1 class="text-4xl md:text-5xl font-black text-slate-100 tracking-tight">
+            Sentence <span class="header-gradient">Scramble</span>
+        </h1>
+        <p class="text-slate-400 font-medium">Drag the words to form correct sentences.</p>
+    </div>
+
+    <div class="game-container relative">
+        <div class="flex justify-between text-slate-400 font-bold mb-4">
+            <span>Score: <span id="score" class="text-white">0</span></span>
+            <span>Level: <span id="level" class="text-white">1</span>/4</span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Formal Column -->
-            <div>
-                <div class="red-header">Formal Greetings</div>
-                <div class="col-container">
-                    <div class="greeting-item" onclick="speak('Hello Mary')">Hello Mary. 🔊</div>
-                    <div class="greeting-item" onclick="speak('Hello')">Hello. 🔊</div>
-                    <div class="greeting-item" onclick="speak('How are you?')">How are you? 🔊</div>
-                    <div class="greeting-item" onclick="speak('Good morning')">Good morning. 🔊</div>
-                    <div class="greeting-item" onclick="speak('Good afternoon')">Good afternoon. 🔊</div>
-                    <div class="greeting-item" onclick="speak('Good evening')">Good evening. 🔊</div>
-                    <div class="greeting-item" onclick="speak('What are you doing?')">What are you doing? 🔊</div>
-                    <div class="greeting-item" onclick="speak('It’s nice to meet you')">It’s nice to meet you. 🔊</div>
-                    <div class="greeting-item" onclick="speak('How is it going?')">How is it going? 🔊</div>
-                    <div class="greeting-item" onclick="speak('How are you doing?')">How are you doing? 🔊</div>
-                    <div class="greeting-item" onclick="speak('Good to see you')">Good to see you. 🔊</div>
-                    <div class="greeting-item" onclick="speak('It is a pleasure to meet you')">It is a pleasure to meet
-                        you. 🔊</div>
-                    <div class="greeting-item" onclick="speak('How do you do?')">How do you do? 🔊</div>
-                    <div class="greeting-item" onclick="speak('It’s an honor to meet you')">It’s an honor to meet you.
-                        🔊</div>
-                    <div class="greeting-item" onclick="speak('Nice to meet you')">Nice to meet you. 🔊</div>
-                </div>
-            </div>
+        <div id="sentence-area" class="sentence-area"></div>
 
-            <!-- Informal Column -->
-            <div>
-                <div class="red-header" style="background: #f97316;">Informal Greetings</div>
-                <div class="col-container">
-                    <div class="greeting-item" onclick="speak('Hi!')">Hi! 🔊</div>
-                    <div class="greeting-item" onclick="speak('Hey!')">Hey! 🔊</div>
-                    <div class="greeting-item" onclick="speak('What’s up?')">What’s up? 🔊</div>
-                    <div class="greeting-item" onclick="speak('Howdy!')">Howdy! 🔊</div>
-                    <div class="greeting-item" onclick="speak('How are ya?')">How are ya? 🔊</div>
-                    <div class="greeting-item" onclick="speak('What’s new?')">What’s new? 🔊</div>
-                    <div class="greeting-item" onclick="speak('What’s going on?')">What’s going on? 🔊</div>
-                    <div class="greeting-item" onclick="speak('How is it going?')">How is it going? 🔊</div>
-                    <div class="greeting-item" onclick="speak('How are things?')">How are things? 🔊</div>
-                    <div class="greeting-item" onclick="speak('How’s everything?')">How’s everything? 🔊</div>
-                    <div class="greeting-item" onclick="speak('How’s life?')">How’s life? 🔊</div>
-                    <div class="greeting-item" onclick="speak('Long time no see!')">Long time no see! 🔊</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mt-8 text-slate-400 font-bold text-sm">
-            www.loveenglish.org
+        <div id="victory-overlay">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-4xl font-black text-white mb-4">Great Job!</h2>
+            <button onclick="initGame()"
+                class="px-8 py-3 bg-indigo-600 rounded-xl text-white font-bold hover:bg-indigo-500 transition">Play
+                Again</button>
         </div>
     </div>
 
     <script>
-        function speak(text) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'en-US';
-            window.speechSynthesis.speak(u);
+        const levels = [
+            "My name is John",
+            "I am from London",
+            "Nice to meet you",
+            "I am a Doctor"
+        ];
+
+        let currentLevel = 0;
+        let score = 0;
+        let lockedWords = {};
+        let unlockedWords = [];
+        const area = document.getElementById('sentence-area');
+
+        function initGame() {
+            currentLevel = 0; score = 0;
+            document.getElementById('victory-overlay').classList.remove('active');
+            loadLevel();
         }
+
+        function loadLevel() {
+            if (currentLevel >= levels.length) {
+                document.getElementById('victory-overlay').classList.add('active');
+                return;
+            }
+
+            document.getElementById('score').innerText = score;
+            document.getElementById('level').innerText = currentLevel + 1;
+
+            const sentence = levels[currentLevel];
+            const words = sentence.split(' ');
+
+            lockedWords = {};
+            unlockedWords = words.map((w, i) => ({ text: w, originalIndex: i, id: Math.random().toString(36) }));
+
+            // Shuffle
+            for (let i = unlockedWords.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [unlockedWords[i], unlockedWords[j]] = [unlockedWords[j], unlockedWords[i]];
+            }
+
+            render();
+        }
+
+        function render() {
+            area.innerHTML = '';
+            const total = levels[currentLevel].split(' ').length;
+            let unlockedIdx = 0;
+
+            for (let i = 0; i < total; i++) {
+                if (lockedWords[i]) {
+                    area.appendChild(createTile(lockedWords[i], true));
+                } else {
+                    if (unlockedIdx < unlockedWords.length) {
+                        area.appendChild(createTile(unlockedWords[unlockedIdx], false));
+                        unlockedIdx++;
+                    }
+                }
+            }
+        }
+
+        function createTile(wordObj, isLocked) {
+            const el = document.createElement('div');
+            el.className = 'word-tile' + (isLocked ? ' locked' : '');
+            el.innerText = wordObj.text;
+            el.draggable = !isLocked;
+
+            if (!isLocked) {
+                el.ondragstart = (e) => {
+                    e.dataTransfer.setData('text/plain', JSON.stringify(wordObj));
+                    setTimeout(() => el.classList.add('opacity-50'), 0);
+                };
+                el.ondragend = () => el.classList.remove('opacity-50');
+            }
+            return el;
+        }
+
+        area.ondragover = (e) => e.preventDefault();
+        area.ondrop = (e) => {
+            e.preventDefault();
+            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+
+            // Find where we dropped
+            // Simple logic: check if the word matches the slot
+            // Since we don't have precise slots, we check based on global correct order?
+            // Wait, the order-game-v2 logic checked if the text matches the target index.
+            // But we don't know the exact index from a generic drop unless we calculate position.
+
+            // Simplified Logic for Demo:
+            // Just check if the dropped word is the next one needed?
+            // OR reuse the logic: "If currentUnlockedWord.text === targetWord"
+            // Let's implement auto-lock if dropped roughly in place or simple check.
+
+            // Actually, let's keep it simple: Drag anywhere to reorder?
+            // Or Drag to "Slot"?
+            // The referenced code used "checkOrder()" which locked words if they happened to fall into the correct index visually.
+            // Let's simplified version: On drop, we reshuffle unlocked array based on drop position, then check correctness.
+
+            // 1. Remove from old pos
+            const oldIdx = unlockedWords.findIndex(w => w.id === data.id);
+            if (oldIdx === -1) return;
+            unlockedWords.splice(oldIdx, 1);
+
+            // 2. Insert at new pos (Approximation: End of list for now, or find index)
+            // To do it properly involves bounding rects.
+            // Let's just push to end for simplicity in this artifact, or try to be smart.
+            // Smart:
+            let insertIdx = unlockedWords.length;
+            const children = Array.from(area.children).filter(c => !c.classList.contains('locked'));
+            for (let i = 0; i < children.length; i++) {
+                const rect = children[i].getBoundingClientRect();
+                if (e.clientX < rect.left + rect.width / 2) {
+                    insertIdx = i;
+                    break;
+                }
+            }
+            unlockedWords.splice(insertIdx, 0, data);
+
+            // 3. Check Order
+            checkWinCondition();
+            render();
+        };
+
+        function checkWinCondition() {
+            const targetWords = levels[currentLevel].split(' ');
+            // We iterate through visual slots.
+            // If unlockedWords[0] matches targetWords[next_needed_index], lock it?
+            // This requires gaps. The V2 code was sophisticated.
+
+            // Simpler "Lock in order" logic:
+            // If the first unlocked word matches the next needed word, lock it.
+            let nextNeededIndex = 0;
+            while (lockedWords[nextNeededIndex]) nextNeededIndex++;
+
+            if (unlockedWords.length > 0 && unlockedWords[0].text === targetWords[nextNeededIndex]) {
+                lockedWords[nextNeededIndex] = unlockedWords.shift();
+                // Check if done
+                if (Object.keys(lockedWords).length === targetWords.length) {
+                    score += 100;
+                    setTimeout(() => {
+                        currentLevel++;
+                        loadLevel();
+                    }, 1000);
+                }
+            }
+        }
+
+        // Theme Support
+        window.setTheme = (mode) => {
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+        };
+        document.documentElement.classList.add('dark');
+
+        loadLevel();
     </script>
 </body>
 

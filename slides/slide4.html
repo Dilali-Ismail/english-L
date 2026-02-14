@@ -8,54 +8,98 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+        }
+    </script>
     <style>
+        :root {
+            --bg-page: #0f172a;
+            /* Forced Dark */
+            --surface: #1e293b;
+            --text-main: #f1f5f9;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            height: 100vh;
-            overflow: hidden;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            overflow-y: auto;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .video-container {
             width: 100%;
             max-width: 900px;
             aspect-ratio: 16/9;
-            background: black;
+            background: #000;
             border-radius: 1.5rem;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            border: 8px solid white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
         }
 
-        .highlight-yellow {
-            background-color: #fde047;
-            padding: 0.2rem 0.5rem;
-            transform: skew(-3deg);
-            display: inline-block;
+        /* Decorative Glow */
+        .video-container::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(45deg, #4f46e5, #06b6d4);
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(20px);
+            border-radius: inherit;
         }
     </style>
 </head>
 
 <body>
 
-    <h1 class="text-4xl md:text-5xl font-black mb-8 text-center text-slate-800">
-        <span class="highlight-yellow">VIDEO</span> with answers
-    </h1>
+    <div class="w-full max-w-5xl flex flex-col items-center">
+        <!-- Header -->
+        <div class="text-center space-y-6 mb-10">
+            <span
+                class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-500 bg-indigo-900/30 dark:text-indigo-400 px-4 py-1.5 rounded-full border border-indigo-800/50">
+                Slide 04 - Video Session
+            </span>
+            <h1 class="text-5xl font-black text-slate-100 tracking-tight">
+                Watch <span class="header-gradient">&amp; Learn</span>
+            </h1>
+            <p class="text-slate-400 font-medium">Watch the video below and pay attention to the introductions.</p>
+        </div>
 
-    <div class="video-container">
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/UnEmEbWytI8?rel=0"
-            title="YouTube video player" frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen></iframe>
+        <div class="video-container">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/UnEmEbWytI8?rel=0"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+        </div>
     </div>
 
-    <p class="mt-6 text-slate-500 font-bold uppercase tracking-widest text-sm">Watch and Repeat</p>
-
+    <script>
+        // Theme Support
+        window.setTheme = (mode) => {
+            if (mode === 'dark') document.documentElement.classList.add('dark');
+        };
+        document.documentElement.classList.add('dark');
+    </script>
 </body>
 
 </html>
