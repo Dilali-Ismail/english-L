@@ -1,119 +1,328 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide 12 - Homework</title>
+    <title>Slide 12 - Practice at Home | Homework Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
-        rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: '#4f46e5',
+                        'brand-glow': '#818cf8',
+                    }
+                }
+            }
         }
     </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         :root {
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --text-slate: #f1f5f9;
             --bg-body: #0f172a;
-            --surface: #1e293b;
-            --border-ui: #334155;
-            --text-main: #f1f5f9;
+            --card-bg: #1e293b;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
-            color: var(--text-main);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0, transparent 40%);
             min-height: 100vh;
             margin: 0;
+            padding: 2rem;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow-x: hidden;
         }
 
         .header-gradient {
             background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .btn-card {
-            background: var(--surface);
-            border: 1px solid var(--border-ui);
-            border-radius: 1.5rem;
-            padding: 2rem;
+        .game-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2.5rem;
+            padding: 3rem;
             width: 100%;
-            max-width: 300px;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            items-align: center;
-            gap: 1rem;
+            max-width: 900px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
         }
 
-        .btn-card:hover {
-            transform: translateY(-8px);
-            border-color: #6366f1;
-            box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.3);
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .drop-zone {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+            height: 48px;
+            margin: 0 0.5rem;
+            vertical-align: middle;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            background: rgba(79, 70, 229, 0.1);
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .drop-zone.correct {
+            border-style: solid;
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .drop-zone.wrong {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .draggable-item {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            color: white;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .draggable-item.placed {
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+
+        .btn-reset:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px var(--primary-glow);
+        }
+
+        .text-content {
+            line-height: 2.2;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        .text-content span.correct-text {
+            color: #f1f5f9;
+            font-weight: 800;
         }
     </style>
 </head>
 
 <body>
-    <div class="w-full max-w-5xl p-8 flex flex-col items-center gap-12">
-        <div class="text-center space-y-4">
-            <span
-                class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-400 bg-indigo-900/30 px-4 py-1.5 rounded-full border border-indigo-800/50">
-                Slide 12 - Homework
-            </span>
-            <h1 class="text-5xl md:text-6xl font-black text-slate-100 tracking-tight">
-                Practice at <span class="header-gradient">Home</span>
-            </h1>
-            <p class="text-slate-400 text-xl">Complete these activities before the next lesson.</p>
+
+    <div class="text-center space-y-4 mb-10">
+        <span
+            class="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-400 bg-indigo-900/30 px-4 py-1.5 rounded-full border border-indigo-800/50">
+            Slide 12 - Homework Activity
+        </span>
+        <h1 class="text-5xl md:text-6xl font-black text-slate-100 tracking-tight">
+            Practice at <span class="header-gradient">Home</span>
+        </h1>
+        <p class="text-slate-400 text-xl font-medium">Drag the words to complete the introduction!</p>
+    </div>
+
+    <div class="game-container">
+        <!-- Options area -->
+        <div id="options" class="flex flex-wrap gap-3 mb-12 p-6 rounded-2xl bg-white/5 border border-white/10">
+            <div id="Marty" draggable="true" class="draggable-item bg-indigo-500">Marty</div>
+            <div id="three" draggable="true" class="draggable-item bg-rose-500">three</div>
+            <div id="England" draggable="true" class="draggable-item bg-blue-500">England</div>
+            <div id="married" draggable="true" class="draggable-item bg-emerald-600">married</div>
+            <div id="Matt" draggable="true" class="draggable-item bg-fuchsia-500">Matt</div>
+            <div id="London" draggable="true" class="draggable-item bg-violet-600">London</div>
+            <div id="USA" draggable="true" class="draggable-item bg-teal-500">USA</div>
+            <div id="two" draggable="true" class="draggable-item bg-orange-500">two</div>
+            <div id="single" draggable="true" class="draggable-item bg-purple-600">single</div>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-8 w-full">
-            <a href="#" class="btn-card group">
-                <div
-                    class="w-16 h-16 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-3xl mx-auto group-hover:scale-110 transition-transform">
-                    ✏️
-                </div>
-                <h3 class="text-2xl font-bold">Wordwall</h3>
-                <p class="text-sm text-slate-500 font-semibold">Match definitions and practice vocabulary.</p>
-            </a>
+        <!-- Sentence area -->
+        <div class="text-content text-center md:text-left">
+            Hi, My name is
+            <div data-answer="Marty" class="drop-zone"></div>
+            and I'm a student.
+            I'm from
+            <div data-answer="England" class="drop-zone"></div>,
+            but I study at a university in the
+            <div data-answer="USA" class="drop-zone"></div>.
+            I'm
+            <div data-answer="single" class="drop-zone"></div>
+            and I have
+            <div data-answer="two" class="drop-zone" style="min-width: 90px;"></div>
+            brothers.
+        </div>
 
-            <a href="#" class="btn-card group">
-                <div
-                    class="w-16 h-16 rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-3xl mx-auto group-hover:scale-110 transition-transform">
-                    📝
-                </div>
-                <h3 class="text-2xl font-bold">Padlet</h3>
-                <p class="text-sm text-slate-500 font-semibold">Write your introduction and share with class.</p>
-            </a>
-
-            <a href="#" class="btn-card group">
-                <div
-                    class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mx-auto group-hover:scale-110 transition-transform">
-                    🎮
-                </div>
-                <h3 class="text-2xl font-bold">Review Game</h3>
-                <p class="text-sm text-slate-500 font-semibold">Play the sentence builder game again.</p>
-            </a>
+        <div class="flex justify-center mt-8">
+            <button onclick="window.location.reload()" class="btn-reset flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset Game
+            </button>
         </div>
     </div>
 
     <script>
-        gsap.from(".btn-card", { y: 40, opacity: 0, duration: 0.8, stagger: 0.15, ease: "power2.out" });
+        const draggables = document.querySelectorAll('.draggable-item');
+        const dropZones = document.querySelectorAll('.drop-zone');
 
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.id);
+                e.target.style.opacity = '0.5';
+            });
+
+            draggable.addEventListener('dragend', (e) => {
+                e.target.style.opacity = '1';
+            });
+        });
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+
+                const id = e.dataTransfer.getData('text/plain');
+                const draggedElement = document.getElementById(id);
+                const correctAnswer = zone.getAttribute('data-answer');
+
+                if (id === correctAnswer) {
+                    // Correct placement
+                    zone.innerHTML = `<span class="correct-text">${id}</span>`;
+                    zone.classList.remove('wrong');
+                    zone.classList.add('correct');
+
+                    // Hide original draggable
+                    draggedElement.style.display = 'none';
+
+                    // Small success animation
+                    gsap.from(zone.querySelector('span'), {
+                        scale: 1.5,
+                        opacity: 0,
+                        duration: 0.4,
+                        ease: "back.out(2)"
+                    });
+
+                    // Check for completion
+                    checkCompletion();
+                } else {
+                    // Wrong feedback
+                    zone.classList.add('wrong');
+                    setTimeout(() => {
+                        zone.classList.remove('wrong');
+                    }, 500);
+                }
+            });
+        });
+
+        function checkCompletion() {
+            const allCorrect = Array.from(dropZones).every(zone => zone.classList.contains('correct'));
+            if (allCorrect) {
+                // You could add a success modal or message here
+                console.log("Activity Complete!");
+            }
+        }
+
+        // Theme sync
         window.setTheme = (mode) => {
             if (mode === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
         };
-        document.documentElement.classList.add('dark');
+
+        // Entrance animation for sentences
+        gsap.from(".text-content", {
+            opacity: 0,
+            x: -20,
+            duration: 1,
+            delay: 0.3,
+            ease: "power2.out"
+        });
     </script>
 </body>
 
